@@ -1,5 +1,9 @@
 /**
- * 전기기사 필기 준비 - 제미나이(Gemini) AI 비전공자 눈높이 쉬운 설명 연동 모듈 (gemini-helper.js)
+ * 전기기사 필기 준비 - AI 비전공자 쉬운 설명 & 원클릭 연동 모듈 (gemini-helper.js)
+ * 1. 화면 내 즉시 쉬운 풀이 열람 (복사/붙여넣기 전혀 불필요)
+ * 2. ChatGPT 자동 입력 연동 (chatgpt.com/?q=...) - 질문 100% 자동 채움
+ * 3. Gemini 클립보드 복사 후 열기 (gemini.google.com/app)
+ * 4. Google AI 검색 자동 완성 (google.com/search?q=...)
  */
 
 (function (global) {
@@ -39,6 +43,41 @@ ${q.explanation || '해설 요약 참조'}
 4. [시험장 10초 암기 팁]: 실제 시험장에서 비슷한 문제를 만났을 때 바로 정답을 맞출 수 있는 꿀팁이나 공식 암기법을 알려주세요.`;
   }
 
+  // 비전공자 눈높이 쉬운 개념 생성 (화면 내 즉시 표시용)
+  function getInlineBeginnerInsight(q) {
+    const ansNum = (typeof q.answer === 'number') ? q.answer + 1 : q.answer;
+    const ansText = (q.choices && typeof q.answer === 'number' && q.choices[q.answer]) 
+      ? q.choices[q.answer] 
+      : '';
+
+    return `
+      <div class="inline-beginner-box">
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+          <span style="font-size: 1.2rem;">💡</span>
+          <strong style="color: #4338CA; font-size: 0.95rem;">비전공자 3초 쉬운 이해 가이드</strong>
+          <span class="badge" style="background: #EEF2FF; color: #4338CA; font-size: 0.72rem; margin-left: auto;">복붙 없이 바로보기</span>
+        </div>
+
+        <div style="font-size: 0.88rem; line-height: 1.6; color: #1E293B;">
+          <div style="margin-bottom: 8px;">
+            <span style="font-weight: 700; color: #059669;">[핵심 결론]</span>
+            정답은 <b>${ansNum}번 (${ansText})</b>입니다.
+          </div>
+          <div style="margin-bottom: 8px;">
+            <span style="font-weight: 700; color: #2563EB;">[비전공자 쉬운 비유]</span>
+            ${q.explanation || '원리를 단계별로 적용하면 명확히 풀리는 유형입니다.'}
+          </div>
+          <div style="background: #F8FAFC; border: 1px solid #E2E8F0; padding: 10px 12px; border-radius: 6px; margin-top: 8px;">
+            <strong style="color: #D97706; font-size: 0.82rem; display: block; margin-bottom: 2px;">⚡ 시험장 10초 암기 꿀팁</strong>
+            <span style="font-size: 0.82rem; color: #475569;">
+              이 유형은 지문 속 키워드(<b>${q.chapter || q.subject}</b> 관련)와 정답 보기의 비례·반비례 관계를 공식과 1:1로 매칭하여 외우면 실전에서 5초 만에 풀 수 있습니다.
+            </span>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
   function showToast(message, icon = '✨') {
     let toast = document.getElementById('gemini-toast-notice');
     if (!toast) {
@@ -61,91 +100,92 @@ ${q.explanation || '해설 요약 참조'}
     clearTimeout(toast._timer);
     toast._timer = setTimeout(() => {
       toast.classList.remove('show');
-    }, 4500);
+    }, 4000);
   }
 
+  // 1. ChatGPT로 질문 (URL에 질문이 100% 자동 채워짐 - 복붙 필요 없음!)
+  function askChatGPT(q) {
+    if (!q) return;
+    const prompt = createBeginnerPrompt(q);
+    const url = 'https://chatgpt.com/?q=' + encodeURIComponent(prompt);
+    showToast('ChatGPT 창이 열리며 질문이 <b>자동 입력</b>됩니다!', '🤖');
+    window.open(url, '_blank', 'noopener,noreferrer');
+  }
+
+  // 2. Google AI 검색으로 질문 (100% 자동 입력)
+  function askGoogleAI(q) {
+    if (!q) return;
+    const query = `${q.subject || '전기기사'} "${q.question ? q.question.slice(0, 45) : ''}" 풀이 해설`;
+    const url = 'https://www.google.com/search?q=' + encodeURIComponent(query);
+    showToast('구글 검색으로 이동하여 <b>AI 해설 요약</b>을 바로 확인합니다!', '🔍');
+    window.open(url, '_blank', 'noopener,noreferrer');
+  }
+
+  // 3. Google Gemini로 질문 (클립보드 자동 복사 + 열기)
   function askGemini(questionData) {
     if (!questionData) return;
-
     const prompt = createBeginnerPrompt(questionData);
 
-    // 1. 클립보드에 프롬프트 복사
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(prompt).then(() => {
         showToast(`
-          <strong style="color: #60A5FA; display: block; margin-bottom: 2px;">비전공자 맞춤 질문이 클립보드에 복사되었습니다!</strong>
-          제미나이(Gemini) 웹 채팅창에 바로 <b>붙여넣기(Ctrl+V / Cmd+V)</b> 하세요.
-        `, '🤖');
+          <strong style="color: #60A5FA; display: block; margin-bottom: 2px;">질문이 복사되었습니다!</strong>
+          제미나이 창에서 <b>붙여넣기(Ctrl+V)</b> 하세요. (※ 자동입력은 ChatGPT 버튼 추천)
+        `, '✨');
       }).catch(() => {
-        showToast('제미나이 웹으로 이동합니다. 채팅창에 질문해 보세요!', '🤖');
+        showToast('제미나이 웹으로 이동합니다!', '✨');
       });
-    } else {
-      // 레거시 fallback
-      try {
-        const ta = document.createElement('textarea');
-        ta.value = prompt;
-        ta.style.position = 'fixed';
-        ta.style.opacity = '0';
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand('copy');
-        document.body.removeChild(ta);
-        showToast(`
-          <strong style="color: #60A5FA; display: block; margin-bottom: 2px;">비전공자 맞춤 질문이 복사되었습니다!</strong>
-          제미나이(Gemini) 창에 <b>붙여넣기(Ctrl+V)</b> 하세요.
-        `, '🤖');
-      } catch (e) {
-        showToast('제미나이 웹으로 이동합니다!', '🤖');
-      }
     }
 
-    // 2. 새 탭으로 Google Gemini 공식 웹사이트 열기
     setTimeout(() => {
       window.open('https://gemini.google.com/app', '_blank', 'noopener,noreferrer');
-    }, 400);
+    }, 300);
   }
 
+  // 4. 공식 질문
   function askGeminiForFormula(formulaData) {
     if (!formulaData) return;
-
     const prompt = `[전기기사 필기 - 비전공자 필수 공식 쉬운 설명 요청]
+공식: ${formulaData.title} (${formulaData.formula})
+단위 및 의미: ${formulaData.unit} / ${formulaData.meaning}
+비전공자가 이해하기 쉬운 비유와 실전 계산 예제를 단계별로 설명해 주세요!`;
 
-안녕하세요! 저는 전기 비전공자 수험생입니다. 아래 공식의 유도 과정과 실전 시험 출제 원리가 이해하기 어렵습니다.
-비전공자 눈높이에서 일상 비유와 함께 쉽게 풀어서 설명해 주세요!
-
-■ 공식명: ${formulaData.title} (${formulaData.subject})
-■ 주요 공식: ${formulaData.formula}
-■ 단위 및 설명: ${formulaData.unit || ''} / ${formulaData.meaning || ''}
-${formulaData.caution ? `■ 주의사항: ${formulaData.caution}` : ''}
-
-[요청 사항]
-1. 비전공자도 바로 이해되는 쉬운 개념 비유
-2. 시험 문제에서 어떤 키워드가 나오면 이 공식을 써야 하는지 판단 기준
-3. 숫자를 대입하여 계산하는 대표적인 예제 문제 1개와 단계별 풀이
-4. 잊어버리지 않는 10초 암기 꿀팁`;
-
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(prompt).then(() => {
-        showToast(`
-          <strong style="color: #60A5FA; display: block; margin-bottom: 2px;">공식 질문이 클립보드에 복사되었습니다!</strong>
-          제미나이(Gemini) 웹 채팅창에 <b>붙여넣기(Ctrl+V)</b> 하세요.
-        `, '🧮');
-      }).catch(() => {
-        showToast('제미나이 웹으로 이동합니다!', '🧮');
-      });
-    }
-
-    setTimeout(() => {
-      window.open('https://gemini.google.com/app', '_blank', 'noopener,noreferrer');
-    }, 400);
+    // ChatGPT 자동입력 링크 지원
+    const chatGptUrl = 'https://chatgpt.com/?q=' + encodeURIComponent(prompt);
+    window.open(chatGptUrl, '_blank', 'noopener,noreferrer');
+    showToast('ChatGPT 창에서 공식 쉬운 설명이 <b>자동 시작</b>됩니다!', '🧮');
   }
 
-  // 글로벌 등록
+  // 화면 내 즉시 토글
+  function toggleInlineExplanation(btnEl, q) {
+    if (!btnEl) return;
+    const parent = btnEl.closest('.explanation-box') || btnEl.parentElement;
+    let target = parent.querySelector('.inline-beginner-mount');
+    if (!target) {
+      target = document.createElement('div');
+      target.className = 'inline-beginner-mount';
+      parent.appendChild(target);
+    }
+
+    if (target.style.display === 'block') {
+      target.style.display = 'none';
+      btnEl.innerHTML = '<span class="gemini-sparkle">💡</span> 쉬운 설명 바로보기 (복붙X)';
+    } else {
+      target.innerHTML = getInlineBeginnerInsight(q);
+      target.style.display = 'block';
+      btnEl.innerHTML = '<span class="gemini-sparkle">▲</span> 쉬운 설명 접기';
+    }
+  }
+
   global.CBTGemini = {
     createPrompt: createBeginnerPrompt,
     askQuestion: askGemini,
+    askChatGPT: askChatGPT,
+    askGoogleAI: askGoogleAI,
     askFormula: askGeminiForFormula,
+    toggleInline: toggleInlineExplanation,
     showToast: showToast
   };
 
 })(window);
+

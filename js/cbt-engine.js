@@ -140,16 +140,26 @@
                 <span>난이도: ${q.difficulty || '보통'}</span>
               </div>
 
-              <!-- 제미나이(Gemini) 비전공자 맞춤 쉬운 설명 연동 버튼 -->
+              <!-- 비전공자 맞춤 쉬운 설명 3중 솔루션 (화면 내 즉시보기 + ChatGPT 자동채움 + Gemini) -->
               <div class="gemini-action-wrap">
                 <div class="gemini-help-hint">
                   <span>💡</span>
-                  <span>정답이나 공식이 이해가 안 되시나요? (비전공자 맞춤)</span>
+                  <span>정답·수식이 어렵다면? (비전공자 눈높이 풀이)</span>
                 </div>
-                <button type="button" class="btn-gemini-ask" id="btn-gemini-ask-current">
-                  <span class="gemini-sparkle">✨</span>
-                  <span>제미나이로 쉽게 더 설명듣기 ↗</span>
-                </button>
+                <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
+                  <button type="button" class="btn-gemini-ask btn-gemini-ask-sm" id="btn-toggle-inline-easy" style="background: linear-gradient(135deg, #059669, #0D9488); border-color: #34D399;">
+                    <span class="gemini-sparkle">💡</span>
+                    <span>쉬운 설명 바로보기 (복붙X)</span>
+                  </button>
+                  <button type="button" class="btn-ai-sub" id="btn-ask-chatgpt-auto" title="질문이 자동으로 채워진 채로 열립니다">
+                    <span>🤖</span>
+                    <span>ChatGPT 자동입력 ↗</span>
+                  </button>
+                  <button type="button" class="btn-ai-sub" id="btn-ask-gemini-copy" title="질문 자동복사 후 제미나이 열기">
+                    <span>✨</span>
+                    <span>Gemini ↗</span>
+                  </button>
+                </div>
               </div>
             </div>
           ` : ''}
@@ -269,8 +279,22 @@
         });
       }
 
-      // 제미나이(Gemini) 비전공자 맞춤 질문 버튼
-      const geminiBtn = document.getElementById('btn-gemini-ask-current');
+      // 비전공자 맞춤 쉬운 설명 버튼들
+      const inlineBtn = document.getElementById('btn-toggle-inline-easy');
+      if (inlineBtn && global.CBTGemini) {
+        inlineBtn.addEventListener('click', () => {
+          global.CBTGemini.toggleInline(inlineBtn, currentQ);
+        });
+      }
+
+      const chatGptBtn = document.getElementById('btn-ask-chatgpt-auto');
+      if (chatGptBtn && global.CBTGemini) {
+        chatGptBtn.addEventListener('click', () => {
+          global.CBTGemini.askChatGPT(currentQ);
+        });
+      }
+
+      const geminiBtn = document.getElementById('btn-ask-gemini-copy');
       if (geminiBtn && global.CBTGemini) {
         geminiBtn.addEventListener('click', () => {
           global.CBTGemini.askQuestion(currentQ);

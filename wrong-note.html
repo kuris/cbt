@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="/css/cg-auth.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/js/auth-guard.js"></script>
 </head>
 <body>
 
@@ -153,7 +154,7 @@
   </style>
 
   <script src="/js/supabase-config.js"></script>
-  <script src="/js/cg-auth.js"></script>
+  <script defer src="/js/cg-auth.js" data-service="cbt" data-mount=".header-right" data-mount-mode="prepend" data-adopt="true"></script>
   <script src="/js/storage-manager.js"></script>
   <script src="/js/electric-data.js"></script>
   <script src="/js/electric-questions.js"></script>
@@ -334,16 +335,26 @@
                 <strong style="color: var(--text-main); display: block; margin-bottom: 4px;">💡 정답 해설</strong>
                 ${q.explanation}
 
-                <!-- 제미나이(Gemini) 비전공자 맞춤 쉬운 설명 연동 버튼 -->
-                <div class="gemini-action-wrap" style="margin-top: 10px; padding-top: 10px;">
+                <!-- 비전공자 맞춤 쉬운 설명 3중 솔루션 -->
+                <div class="gemini-action-wrap" style="margin-top: 12px; padding-top: 10px;">
                   <div class="gemini-help-hint">
                     <span>💡</span>
                     <span>비전공자라서 수식이나 용어가 어렵다면?</span>
                   </div>
-                  <button type="button" class="btn-gemini-ask btn-gemini-ask-sm" onclick="askWrongGemini('${q.id}')">
-                    <span class="gemini-sparkle">✨</span>
-                    <span>제미나이로 쉽게 더 설명듣기 ↗</span>
-                  </button>
+                  <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
+                    <button type="button" class="btn-gemini-ask btn-gemini-ask-sm" onclick="toggleWrongInline(this, '${q.id}')" style="background: linear-gradient(135deg, #059669, #0D9488); border-color: #34D399;">
+                      <span class="gemini-sparkle">💡</span>
+                      <span>쉬운 설명 바로보기 (복붙X)</span>
+                    </button>
+                    <button type="button" class="btn-ai-sub" onclick="askWrongChatGPT('${q.id}')" title="질문이 자동으로 채워진 채로 열립니다">
+                      <span>🤖</span>
+                      <span>ChatGPT 자동입력 ↗</span>
+                    </button>
+                    <button type="button" class="btn-ai-sub" onclick="askWrongGemini('${q.id}')" title="질문 자동복사 후 제미나이 열기">
+                      <span>✨</span>
+                      <span>Gemini ↗</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -351,12 +362,22 @@
         }).join('');
       }
 
+      window.toggleWrongInline = function(btn, qId) {
+        if (!window.ELECTRIC_QUESTIONS || !window.CBTGemini) return;
+        const q = window.ELECTRIC_QUESTIONS.getAll().find(item => item.id === qId);
+        if (q) window.CBTGemini.toggleInline(btn, q);
+      };
+
+      window.askWrongChatGPT = function(qId) {
+        if (!window.ELECTRIC_QUESTIONS || !window.CBTGemini) return;
+        const q = window.ELECTRIC_QUESTIONS.getAll().find(item => item.id === qId);
+        if (q) window.CBTGemini.askChatGPT(q);
+      };
+
       window.askWrongGemini = function(qId) {
         if (!window.ELECTRIC_QUESTIONS || !window.CBTGemini) return;
         const q = window.ELECTRIC_QUESTIONS.getAll().find(item => item.id === qId);
-        if (q) {
-          window.CBTGemini.askQuestion(q);
-        }
+        if (q) window.CBTGemini.askQuestion(q);
       };
 
       window.removeWrongItem = function(qId) {
