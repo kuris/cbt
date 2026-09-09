@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>스마트 오답노트 & 재풀이 | 전기기사 필기 준비 CBT</title>
+  <meta name="description" content="전기기사 필기 문제풀이 중 틀린 문제를 자동으로 모아두고 과목별로 다시 풀어보는 스마트 오답노트. 완벽히 이해할 때까지 반복 학습 지원.">
+  <link rel="canonical" href="https://cbt.chatgpts.kr/wrong-note">
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>❌</text></svg>">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/cg-auth.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+  <div class="app-wrap">
+    <header class="site-header">
+      <a href="/" class="site-logo">
+        <span class="logo-icon">⚡</span>
+        <span>전기기사 필기 준비</span>
+        <span class="logo-badge">CBT</span>
+      </a>
+
+      <nav class="nav-links">
+        <a href="/subjects" class="nav-link">과목별 이론</a>
+        <a href="/past-exams" class="nav-link">회차별 기출</a>
+        <a href="/daily" class="nav-link">일일 10제</a>
+        <a href="/random" class="nav-link">랜덤 풀기</a>
+        <a href="/mock" class="nav-link">실전 모의고사</a>
+        <a href="/formulas" class="nav-link">공식 암기장</a>
+        <a href="/wrong-note" class="nav-link active">오답노트</a>
+        <a href="/my" class="nav-link">내 학습</a>
+      </nav>
+
+      <div class="header-right">
+        <div id="cg-auth-container" data-service="cbt"></div>
+      </div>
+    </header>
+
+    <nav class="mobile-subnav">
+      <a href="/daily">일일10제</a>
+      <a href="/past-exams">기출CBT</a>
+      <a href="/mock">실전모의</a>
+      <a href="/subjects">이론치트키</a>
+      <a href="/formulas">공식카드</a>
+      <a href="/wrong-note" class="active">오답노트</a>
+      <a href="/my">내서재</a>
+    </nav>
+
+    <!-- 오답노트 헤더 & 액션 바 -->
+    <div style="margin: 28px 0 20px; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 14px;">
+      <div>
+        <div class="hero-badge" style="background: var(--danger-light); color: var(--danger); border: 1px solid var(--danger-border);">
+          ❌ 취약 유형 집중 클리닉
+        </div>
+        <h1 style="font-size: 1.8rem; font-weight: 800; color: var(--text-main); margin-top: 8px;">
+          스마트 오답노트
+        </h1>
+        <p style="font-size: 0.95rem; color: var(--text-muted); margin-top: 4px;">
+          시험과 모의고사에서 틀린 문제를 자동으로 누적 관리합니다. 완벽히 숙지할 때까지 오답만 모아 재응시하세요.
+        </p>
+      </div>
+
+      <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <button id="resolve-wrong-btn" class="btn btn-primary" style="padding: 10px 18px; font-weight: 800;">
+          🔥 오답만 다시 풀기 (CBT)
+        </button>
+        <button id="clear-all-wrong-btn" class="btn btn-outline" style="padding: 10px 14px; color: var(--danger); border-color: var(--danger-border);">
+          오답 비우기
+        </button>
+      </div>
+    </div>
+
+    <!-- 과목 필터 탭 -->
+    <div class="formula-tabs" id="wrong-subject-tabs" style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 24px; scrollbar-width: none;">
+      <button class="formula-tab-btn active" data-sub="all">전체 오답 (<span id="count-all">0</span>)</button>
+      <button class="formula-tab-btn" data-sub="em">🧲 전기자기학 (<span id="count-em">0</span>)</button>
+      <button class="formula-tab-btn" data-sub="pe">⚡ 전력공학 (<span id="count-pe">0</span>)</button>
+      <button class="formula-tab-btn" data-sub="emach">⚙️ 전기기기 (<span id="count-emach">0</span>)</button>
+      <button class="formula-tab-btn" data-sub="cc">🔬 회로이론·제어 (<span id="count-cc">0</span>)</button>
+      <button class="formula-tab-btn" data-sub="er">📐 전기설비 (<span id="count-er">0</span>)</button>
+    </div>
+
+    <!-- 오답 카드 목록 영역 -->
+    <main id="wrong-list-mount" style="min-height: 480px; margin-bottom: 40px;">
+      <!-- JS 동적 렌더링 -->
+    </main>
+
+    <!-- 오답 다시 풀기 CBT 레이아웃 (재풀이 시 노출) -->
+    <div id="resolve-cbt-area" style="display: none; margin-bottom: 40px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <button id="back-to-list-btn" class="btn btn-outline" style="font-size: 0.85rem; padding: 6px 14px;">
+          ← 오답 목록으로 돌아가기
+        </button>
+        <span style="font-size: 0.88rem; font-weight: 700; color: var(--danger);">🔥 오답 재풀이 집중 훈련</span>
+      </div>
+      <div id="resolve-cbt-mount"></div>
+    </div>
+
+    <footer class="site-footer">
+      <div class="family-bar">
+        <span class="family-title">Family Services</span>
+        <div class="family-links">
+          <a href="https://hanja.chatgpts.kr" target="_blank" rel="noopener">한자야 놀자</a>
+          <a href="https://voca.chatgpts.kr" target="_blank" rel="noopener">보카야 놀자</a>
+          <a href="https://history.chatgpts.kr" target="_blank" rel="noopener">한국사야 놀자</a>
+          <a href="https://fortune.chatgpts.kr" target="_blank" rel="noopener">운세야 놀자</a>
+          <a href="https://mind.chatgpts.kr" target="_blank" rel="noopener">마음일기</a>
+          <a href="https://bible.chatgpts.kr" target="_blank" rel="noopener">바이블야 놀자</a>
+          <a href="https://tools.chatgpts.kr" target="_blank" rel="noopener">만능도구함</a>
+        </div>
+      </div>
+      <div class="footer-legal">
+        <p><strong>전기기사 필기 준비 (cbt.chatgpts.kr)</strong> | 스마트 오답노트</p>
+        <p style="margin-top: 8px; font-size: 0.76rem; color: var(--text-subtle);">© 2026 전기기사 필기 준비. All rights reserved.</p>
+      </div>
+    </footer>
+  </div>
+
+  <style>
+    .wrong-item-card {
+      background: #FFFFFF;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      margin-bottom: 18px;
+      box-shadow: var(--shadow-sm);
+    }
+    .wrong-choice-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: var(--radius-xs);
+      margin-bottom: 6px;
+      font-size: 0.9rem;
+      border: 1px solid var(--border);
+      background: #FFFFFF;
+    }
+    .wrong-choice-item.user-wrong {
+      background: var(--danger-light);
+      border-color: var(--danger-border);
+      color: var(--danger);
+      font-weight: 700;
+    }
+    .wrong-choice-item.actual-correct {
+      background: var(--success-light);
+      border-color: var(--success-border);
+      color: var(--success);
+      font-weight: 700;
+    }
+  </style>
+
+  <script src="/js/supabase-config.js"></script>
+  <script src="/js/cg-auth.js"></script>
+  <script src="/js/storage-manager.js"></script>
+  <script src="/js/electric-data.js"></script>
+  <script src="/js/electric-questions.js"></script>
+  <script src="/js/report-modal.js"></script>
+  <script src="/js/cbt-engine.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      let currentSub = 'all';
+      const mount = document.getElementById('wrong-list-mount');
+      const tabs = document.querySelectorAll('.formula-tab-btn');
+      const resolveBtn = document.getElementById('resolve-wrong-btn');
+      const clearBtn = document.getElementById('clear-all-wrong-btn');
+
+      // 탭 전환
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          tabs.forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          currentSub = tab.dataset.sub;
+          renderWrongList();
+        });
+      });
+
+      // 전체 비우기
+      clearBtn.addEventListener('click', () => {
+        if (confirm('오답노트에 저장된 모든 문제를 비우시겠습니까?')) {
+          localStorage.setItem('cbt_wrong_answers', '[]');
+          renderWrongList();
+        }
+      });
+
+      // 오답 다시 풀기 CBT
+      resolveBtn.addEventListener('click', () => {
+        const wrongList = getFilteredWrongQuestions();
+        if (wrongList.length === 0) {
+          alert('풀이할 오답 문제가 없습니다.');
+          return;
+        }
+
+        document.getElementById('wrong-list-mount').style.display = 'none';
+        const resolveArea = document.getElementById('resolve-cbt-area');
+        resolveArea.style.display = 'block';
+
+        window.CBTEngine.start({
+          containerId: 'resolve-cbt-mount',
+          questions: wrongList,
+          examTitle: `오답노트 재풀이 (${wrongList.length}문항)`,
+          examType: 'wrong',
+          subjectId: currentSub,
+          isPractice: true,
+          timeLimitMin: Math.max(15, Math.ceil(wrongList.length * 2))
+        });
+      });
+
+      // 뒤로가기 버튼
+      document.getElementById('back-to-list-btn').addEventListener('click', () => {
+        document.getElementById('resolve-cbt-area').style.display = 'none';
+        document.getElementById('wrong-list-mount').style.display = 'block';
+        renderWrongList();
+      });
+
+      function getFilteredWrongQuestions() {
+        if (!window.CBTStorage || !window.ELECTRIC_QUESTIONS) return [];
+        const wrongs = window.CBTStorage.getWrongAnswers();
+        const allQuestions = window.ELECTRIC_QUESTIONS.getAll();
+
+        const qMap = {};
+        allQuestions.forEach(q => { qMap[q.id] = q; });
+
+        let result = [];
+        wrongs.forEach(w => {
+          const q = qMap[w.questionId];
+          if (q) {
+            if (currentSub === 'all' || q.subject_id === currentSub) {
+              result.push({
+                ...q,
+                userAnswer: w.selectedAnswer,
+                wrongCount: w.wrongCount,
+                lastWrongAt: w.timestamp
+              });
+            }
+          }
+        });
+        return result;
+      }
+
+      function updateCounts() {
+        if (!window.CBTStorage || !window.ELECTRIC_QUESTIONS) return;
+        const wrongs = window.CBTStorage.getWrongAnswers();
+        const allQuestions = window.ELECTRIC_QUESTIONS.getAll();
+        const qMap = {};
+        allQuestions.forEach(q => { qMap[q.id] = q; });
+
+        const counts = { all: 0, em: 0, pe: 0, emach: 0, cc: 0, er: 0 };
+        wrongs.forEach(w => {
+          const q = qMap[w.questionId];
+          if (q) {
+            counts.all++;
+            if (counts[q.subject_id] !== undefined) counts[q.subject_id]++;
+          }
+        });
+
+        document.getElementById('count-all').textContent = counts.all;
+        document.getElementById('count-em').textContent = counts.em;
+        document.getElementById('count-pe').textContent = counts.pe;
+        document.getElementById('count-emach').textContent = counts.emach;
+        document.getElementById('count-cc').textContent = counts.cc;
+        document.getElementById('count-er').textContent = counts.er;
+      }
+
+      function renderWrongList() {
+        updateCounts();
+        const list = getFilteredWrongQuestions();
+
+        if (list.length === 0) {
+          mount.innerHTML = `
+            <div style="text-align: center; padding: 70px 20px; background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius-md);">
+              <span style="font-size: 3rem;">🎉</span>
+              <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--text-main); margin: 12px 0 6px;">
+                현재 저장된 오답 문제가 없습니다!
+              </h3>
+              <p style="font-size: 0.9rem; color: var(--text-muted); max-width: 420px; margin: 0 auto 20px;">
+                문제를 풀면서 틀린 문제가 생기면 이곳에 자동으로 누적되어 취약점을 보완할 수 있습니다.
+              </p>
+              <a href="/daily" class="btn btn-primary">오늘의 일일 10제 풀러가기 →</a>
+            </div>
+          `;
+          return;
+        }
+
+        mount.innerHTML = list.map((q, idx) => {
+          return `
+            <div class="wrong-item-card" id="wrong-card-${q.id}">
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span style="background: var(--danger-light); color: var(--danger); font-size: 0.78rem; font-weight: 800; padding: 4px 10px; border-radius: var(--radius-full); border: 1px solid var(--danger-border);">
+                    오답 ${q.wrongCount || 1}회
+                  </span>
+                  <span style="font-size: 0.8rem; font-weight: 700; color: var(--primary);">${q.subject} · ${q.chapter}</span>
+                  <span style="font-size: 0.78rem; color: var(--text-subtle);">${q.year}년 ${q.round}회</span>
+                </div>
+                <button onclick="removeWrongItem('${q.id}')" style="font-size: 0.78rem; color: var(--text-subtle); cursor: pointer; text-decoration: underline;">
+                  노트에서 삭제
+                </button>
+              </div>
+
+              <h3 style="font-size: 1.05rem; font-weight: 800; color: var(--text-main); line-height: 1.55; margin-bottom: 14px;">
+                Q${idx + 1}. ${q.question}
+              </h3>
+
+              <div style="margin-bottom: 16px;">
+                ${q.choices.map((c, cIdx) => {
+                  let cls = '';
+                  let tag = '';
+                  if (cIdx === q.userAnswer && cIdx !== q.answer) {
+                    cls = 'user-wrong';
+                    tag = '<span style="font-size: 0.72rem; margin-left: auto;">❌ 내가 고른 오답</span>';
+                  } else if (cIdx === q.answer) {
+                    cls = 'actual-correct';
+                    tag = '<span style="font-size: 0.72rem; margin-left: auto;">✅ 정답</span>';
+                  }
+                  return `
+                    <div class="wrong-choice-item ${cls}">
+                      <span style="font-weight: 800;">${cIdx + 1}</span>
+                      <span>${c}</span>
+                      ${tag}
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+
+              <!-- 해설 박스 -->
+              <div style="background: var(--bg-subtle); border-radius: var(--radius-xs); padding: 14px; font-size: 0.88rem; line-height: 1.6; color: var(--text-muted); border-left: 4px solid var(--primary);">
+                <strong style="color: var(--text-main); display: block; margin-bottom: 4px;">💡 정답 해설</strong>
+                ${q.explanation}
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      window.removeWrongItem = function(qId) {
+        if (window.CBTStorage) {
+          window.CBTStorage.resolveWrong(qId);
+          renderWrongList();
+        }
+      };
+
+      renderWrongList();
+    });
+  </script>
+</body>
+</html>

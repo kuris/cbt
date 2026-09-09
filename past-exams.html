@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>회차별 기출문제 CBT (2015~2026 34회차) | 전기기사 필기 준비</title>
+  <meta name="description" content="전기기사 필기 10개년 34회차 실전 기출문제 CBT 풀이. 실제 시험과 동일한 OMR 패널, 자동 채점, 과락 판정, 즉시 해설 및 10개년 PDF 다운로드 제공.">
+  <link rel="canonical" href="https://cbt.chatgpts.kr/past-exams">
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📋</text></svg>">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/cg-auth.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+  <div class="app-wrap">
+    <!-- 헤더 -->
+    <header class="site-header">
+      <a href="/" class="site-logo">
+        <span class="logo-icon">⚡</span>
+        <span>전기기사 필기 준비</span>
+        <span class="logo-badge">CBT</span>
+      </a>
+
+      <nav class="nav-links">
+        <a href="/subjects" class="nav-link">과목별 이론</a>
+        <a href="/past-exams" class="nav-link active">회차별 기출</a>
+        <a href="/daily" class="nav-link">일일 10제</a>
+        <a href="/random" class="nav-link">랜덤 풀기</a>
+        <a href="/mock" class="nav-link">실전 모의고사</a>
+        <a href="/formulas" class="nav-link">공식 암기장</a>
+        <a href="/wrong-note" class="nav-link">오답노트</a>
+        <a href="/my" class="nav-link">내 학습</a>
+      </nav>
+
+      <div class="header-right">
+        <div id="cg-auth-container" data-service="cbt"></div>
+      </div>
+    </header>
+
+    <!-- 모바일 보조 네비게이션 바 -->
+    <nav class="mobile-subnav">
+      <a href="/daily">일일10제</a>
+      <a href="/past-exams" class="active">기출CBT</a>
+      <a href="/mock">실전모의</a>
+      <a href="/subjects">이론치트키</a>
+      <a href="/formulas">공식카드</a>
+      <a href="/wrong-note">오답노트</a>
+      <a href="/my">내서재</a>
+    </nav>
+
+    <!-- 회차 선택 & 설정 헤더바 -->
+    <div style="background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px 20px; margin: 20px 0; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; box-shadow: var(--shadow-sm);">
+      <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+        <label for="exam-round-select" style="font-weight: 800; font-size: 0.95rem; color: var(--text-main);">회차 선택:</label>
+        <select id="exam-round-select" style="padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius-xs); font-size: 0.9rem; font-weight: 700; color: var(--text-main); background: #FFFFFF; outline: none; cursor: pointer;">
+          <!-- JS로 34개 회차 렌더링 -->
+        </select>
+
+        <label for="subject-filter-select" style="font-weight: 800; font-size: 0.95rem; color: var(--text-main); margin-left: 8px;">과목 필터:</label>
+        <select id="subject-filter-select" style="padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius-xs); font-size: 0.9rem; font-weight: 700; color: var(--text-main); background: #FFFFFF; outline: none; cursor: pointer;">
+          <option value="all">전체 5과목 (100문항)</option>
+          <option value="em">1과목. 전기자기학 (20문항)</option>
+          <option value="pe">2과목. 전력공학 (20문항)</option>
+          <option value="emach">3과목. 전기기기 (20문항)</option>
+          <option value="cc">4과목. 회로이론 및 제어공학 (20문항)</option>
+          <option value="er">5과목. 전기설비기술기준 (20문항)</option>
+        </select>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+        <!-- 풀이 모드 토글 -->
+        <div style="display: flex; background: var(--bg-subtle); padding: 3px; border-radius: var(--radius-xs); border: 1px solid var(--border);">
+          <button id="mode-exam-btn" class="btn" style="padding: 6px 12px; font-size: 0.82rem; font-weight: 700; border-radius: var(--radius-xs); background: var(--primary); color: #FFFFFF;">실전 시험</button>
+          <button id="mode-practice-btn" class="btn" style="padding: 6px 12px; font-size: 0.82rem; font-weight: 700; border-radius: var(--radius-xs); color: var(--text-muted);">즉시 해설</button>
+        </div>
+
+        <a href="/past-exams/전기기사_필기_기출문제집_10개년_모두CBT.pdf" target="_blank" class="btn btn-outline" style="font-size: 0.8rem; padding: 6px 12px;" title="10개년 전체 34회차 PDF 열람">
+          📥 문제집(905P)
+        </a>
+        <a href="/past-exams/전기기사_필기_정답해설집_10개년_모두CBT.pdf" target="_blank" class="btn btn-outline" style="font-size: 0.8rem; padding: 6px 12px;" title="10개년 전 문항 해설집 PDF 열람">
+          💡 해설집(1558P)
+        </a>
+      </div>
+    </div>
+
+    <!-- CBT 메인 컨테이너 (좌측: 문제, 우측: OMR 패널) -->
+    <main class="cbt-layout" id="cbt-container">
+      <!-- 좌측 문제 풀이 영역 -->
+      <section class="cbt-question-area">
+        <div id="cbt-question-mount">
+          <!-- JS CBT 엔진에서 동적 렌더링 -->
+        </div>
+      </section>
+
+      <!-- 우측 OMR 시트 및 상태 패널 -->
+      <aside class="cbt-omr-panel">
+        <div class="omr-card">
+          <!-- 타이머 & 진행 상태 -->
+          <div class="omr-header">
+            <div>
+              <span style="font-size: 0.75rem; color: var(--text-subtle); font-weight: 700; text-transform: uppercase;">EXAM TIMER</span>
+              <div class="omr-timer" id="omr-timer">150:00</div>
+            </div>
+            <div style="text-align: right;">
+              <span style="font-size: 0.75rem; color: var(--text-subtle); font-weight: 700;">진행률</span>
+              <div style="font-size: 1.1rem; font-weight: 800; color: var(--primary);" id="omr-progress-text">0 / 0</div>
+            </div>
+          </div>
+
+          <!-- 과목 탭 바로가기 -->
+          <div class="omr-subject-jump" id="omr-subject-jump">
+            <button class="omr-jump-btn active" data-range="1-20">1과목</button>
+            <button class="omr-jump-btn" data-range="21-40">2과목</button>
+            <button class="omr-jump-btn" data-range="41-60">3과목</button>
+            <button class="omr-jump-btn" data-range="61-80">4과목</button>
+            <button class="omr-jump-btn" data-range="81-100">5과목</button>
+          </div>
+
+          <!-- OMR 번호 그리드 -->
+          <div class="omr-grid-wrap">
+            <div class="omr-grid" id="omr-grid-mount">
+              <!-- JS 동적 생성 -->
+            </div>
+          </div>
+
+          <!-- 제출 및 채점 버튼 -->
+          <div style="margin-top: 16px;">
+            <button id="submit-exam-btn" class="btn btn-primary" style="width: 100%; justify-content: center; font-size: 1rem; padding: 12px;">
+              🏁 답안지 제출 및 채점하기
+            </button>
+          </div>
+        </div>
+      </aside>
+    </main>
+
+    <!-- 푸터 -->
+    <footer class="site-footer">
+      <div class="family-bar">
+        <span class="family-title">Family Services</span>
+        <div class="family-links">
+          <a href="https://hanja.chatgpts.kr" target="_blank" rel="noopener">한자야 놀자</a>
+          <a href="https://voca.chatgpts.kr" target="_blank" rel="noopener">보카야 놀자</a>
+          <a href="https://history.chatgpts.kr" target="_blank" rel="noopener">한국사야 놀자</a>
+          <a href="https://fortune.chatgpts.kr" target="_blank" rel="noopener">운세야 놀자</a>
+          <a href="https://mind.chatgpts.kr" target="_blank" rel="noopener">마음일기</a>
+          <a href="https://bible.chatgpts.kr" target="_blank" rel="noopener">바이블야 놀자</a>
+          <a href="https://tools.chatgpts.kr" target="_blank" rel="noopener">만능도구함</a>
+        </div>
+      </div>
+      <div class="footer-legal">
+        <p><strong>전기기사 필기 준비 (cbt.chatgpts.kr)</strong> | 10개년 기출 34회차 3,400문항 완벽 연계</p>
+        <p style="margin-top: 4px;">공개 CBT 자료 기준. 수험생의 학습 편의를 위해 100% 무료로 운영됩니다.</p>
+        <p style="margin-top: 8px; font-size: 0.76rem; color: var(--text-subtle);">© 2026 전기기사 필기 준비. All rights reserved.</p>
+      </div>
+    </footer>
+  </div>
+
+  <style>
+    .cbt-layout {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 20px;
+      align-items: start;
+      margin-bottom: 40px;
+    }
+    @media (max-width: 900px) {
+      .cbt-layout {
+        grid-template-columns: 1fr;
+      }
+      .cbt-omr-panel {
+        order: 2;
+      }
+    }
+    .omr-card {
+      background: #FFFFFF;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      box-shadow: var(--shadow-sm);
+      position: sticky;
+      top: 20px;
+    }
+    .omr-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 12px;
+    }
+    .omr-timer {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--danger);
+      font-family: var(--font-mono);
+      letter-spacing: -0.02em;
+    }
+    .omr-subject-jump {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 12px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .omr-subject-jump::-webkit-scrollbar { display: none; }
+    .omr-jump-btn {
+      flex: 1;
+      padding: 5px 6px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xs);
+      color: var(--text-muted);
+      cursor: pointer;
+      text-align: center;
+      white-space: nowrap;
+    }
+    .omr-jump-btn.active {
+      background: var(--primary);
+      color: #FFFFFF;
+      border-color: var(--primary);
+    }
+    .omr-grid-wrap {
+      max-height: 420px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+    .omr-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 6px;
+    }
+    .omr-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 38px;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xs);
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: var(--transition-fast);
+    }
+    .omr-item:hover {
+      border-color: var(--primary-border);
+      color: var(--primary);
+    }
+    .omr-item.answered {
+      background: var(--primary-light);
+      border-color: var(--primary-border);
+      color: var(--primary);
+    }
+    .omr-item.current {
+      border: 2px solid var(--primary);
+      box-shadow: 0 0 0 2px rgba(37,99,235,0.2);
+    }
+    .omr-item.correct {
+      background: var(--success-light);
+      border-color: var(--success-border);
+      color: var(--success);
+    }
+    .omr-item.wrong {
+      background: var(--danger-light);
+      border-color: var(--danger-border);
+      color: var(--danger);
+    }
+  </style>
+
+  <!-- JS Modules -->
+  <script src="/js/supabase-config.js"></script>
+  <script src="/js/cg-auth.js"></script>
+  <script src="/js/storage-manager.js"></script>
+  <script src="/js/electric-data.js"></script>
+  <script src="/js/electric-questions.js"></script>
+  <script src="/js/report-modal.js"></script>
+  <script src="/js/cbt-engine.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      initPastExamsPage();
+    });
+
+    let currentQuestions = [];
+    let isPracticeMode = false;
+
+    function initPastExamsPage() {
+      const roundSelect = document.getElementById('exam-round-select');
+      const subSelect = document.getElementById('subject-filter-select');
+      const examBtn = document.getElementById('mode-exam-btn');
+      const practiceBtn = document.getElementById('mode-practice-btn');
+
+      // 1. 회차 셀렉트 채우기 (2026 ~ 2015 34회차)
+      if (roundSelect && window.ELECTRIC_DATA) {
+        roundSelect.innerHTML = window.ELECTRIC_DATA.rounds.map(r => `
+          <option value="${r.id}">${r.title} (${r.questions_count}제 - ${r.note})</option>
+        `).join('');
+
+        // URL 파라미터 확인
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('round')) {
+          roundSelect.value = params.get('round');
+        }
+        if (params.get('sub')) {
+          subSelect.value = params.get('sub');
+        }
+      }
+
+      // 2. 모드 변경 이벤트
+      if (examBtn && practiceBtn) {
+        examBtn.addEventListener('click', () => {
+          isPracticeMode = false;
+          examBtn.style.background = 'var(--primary)';
+          examBtn.style.color = '#FFFFFF';
+          practiceBtn.style.background = 'transparent';
+          practiceBtn.style.color = 'var(--text-muted)';
+          loadAndStartQuiz();
+        });
+        practiceBtn.addEventListener('click', () => {
+          isPracticeMode = true;
+          practiceBtn.style.background = 'var(--primary)';
+          practiceBtn.style.color = '#FFFFFF';
+          examBtn.style.background = 'transparent';
+          examBtn.style.color = 'var(--text-muted)';
+          loadAndStartQuiz();
+        });
+      }
+
+      // 3. 필터 변경 시 재시작
+      roundSelect.addEventListener('change', loadAndStartQuiz);
+      subSelect.addEventListener('change', loadAndStartQuiz);
+
+      // 초기 로드
+      loadAndStartQuiz();
+    }
+
+    function loadAndStartQuiz() {
+      const roundSelect = document.getElementById('exam-round-select');
+      const subSelect = document.getElementById('subject-filter-select');
+      const subVal = subSelect.value;
+
+      // 문제 가져오기
+      let questions = [];
+      if (subVal === 'all') {
+        questions = window.ELECTRIC_QUESTIONS.getAll();
+      } else {
+        questions = window.ELECTRIC_QUESTIONS.getBySubject(subVal);
+      }
+
+      if (!questions || questions.length === 0) {
+        questions = window.ELECTRIC_QUESTIONS.getAll();
+      }
+
+      currentQuestions = questions;
+
+      // CBTEngine 구동
+      if (window.CBTEngine) {
+        window.CBTEngine.start({
+          containerId: 'cbt-question-mount',
+          omrGridId: 'omr-grid-mount',
+          timerId: 'omr-timer',
+          progressId: 'omr-progress-text',
+          submitBtnId: 'submit-exam-btn',
+          questions: currentQuestions,
+          examTitle: `${roundSelect.options[roundSelect.selectedIndex].text}`,
+          examType: 'past',
+          subjectId: subVal,
+          isPractice: isPracticeMode,
+          timeLimitMin: 150
+        });
+      }
+    }
+  </script>
+</body>
+</html>

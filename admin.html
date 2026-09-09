@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>오류 신고 및 서비스 관리 | 전기기사 필기 준비 CBT</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛠️</text></svg>">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/cg-auth.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+  <div class="app-wrap">
+    <header class="site-header">
+      <a href="/" class="site-logo">
+        <span class="logo-icon">⚡</span>
+        <span>전기기사 필기 준비</span>
+        <span class="logo-badge">ADMIN</span>
+      </a>
+
+      <nav class="nav-links">
+        <a href="/" class="nav-link">홈</a>
+        <a href="/subjects" class="nav-link">과목별 이론</a>
+        <a href="/past-exams" class="nav-link">회차별 기출</a>
+        <a href="/mock" class="nav-link">실전 모의고사</a>
+        <a href="/admin" class="nav-link active">관리자/오류신고</a>
+      </nav>
+
+      <div class="header-right">
+        <div id="cg-auth-container" data-service="cbt"></div>
+      </div>
+    </header>
+
+    <div style="margin: 28px 0 20px;">
+      <h1 style="font-size: 1.6rem; font-weight: 800; color: var(--text-main);">문제 오류 신고 및 수험 피드백 관리</h1>
+      <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 4px;">
+        수험생분들이 문제 풀이 중 접수한 오탈자, 정답 이의제기, 해설 보강 요청을 확인하고 관리합니다.
+      </p>
+    </div>
+
+    <!-- 시스템 현황 카드 -->
+    <div class="stats-card" style="margin-bottom: 30px;">
+      <div class="stat-box">
+        <div class="stat-number" id="adm-total-qs">50문항</div>
+        <div class="stat-label">등록 기출 문항</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number" id="adm-rounds-count">34회차</div>
+        <div class="stat-label">10개년 기출 회차</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number" id="adm-ebooks-count">5개</div>
+        <div class="stat-label">과목별 치트키 PDF</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number" id="adm-reports-count" style="color: var(--danger);">0건</div>
+        <div class="stat-label">접수된 오류 신고</div>
+      </div>
+    </div>
+
+    <!-- 오류 신고 목록 테이블 -->
+    <section style="background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 24px; margin-bottom: 40px; box-shadow: var(--shadow-sm);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <h2 style="font-size: 1.2rem; font-weight: 800; color: var(--text-main);">접수된 신고 내역</h2>
+        <button id="refresh-reports-btn" class="btn btn-outline" style="font-size: 0.8rem; padding: 6px 12px;">새로고침</button>
+      </div>
+
+      <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; font-size: 0.88rem; text-align: left;">
+          <thead>
+            <tr style="border-bottom: 2px solid var(--border); color: var(--text-muted);">
+              <th style="padding: 10px 12px;">문제 ID</th>
+              <th style="padding: 10px 12px;">신고 유형</th>
+              <th style="padding: 10px 12px;">신고 내용</th>
+              <th style="padding: 10px 12px;">작성자</th>
+              <th style="padding: 10px 12px;">접수일</th>
+              <th style="padding: 10px 12px;">상태</th>
+            </tr>
+          </thead>
+          <tbody id="reports-tbody">
+            <!-- JS 동적 렌더링 -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer class="site-footer">
+      <div class="footer-legal">
+        <p>© 2026 전기기사 필기 준비 관리자 시스템</p>
+      </div>
+    </footer>
+  </div>
+
+  <script src="/js/supabase-config.js"></script>
+  <script src="/js/cg-auth.js"></script>
+  <script src="/js/storage-manager.js"></script>
+  <script src="/js/electric-data.js"></script>
+  <script src="/js/electric-questions.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      loadStats();
+      loadReports();
+
+      document.getElementById('refresh-reports-btn').addEventListener('click', () => {
+        loadReports();
+      });
+    });
+
+    function loadStats() {
+      if (window.ELECTRIC_QUESTIONS) {
+        document.getElementById('adm-total-qs').textContent = `${window.ELECTRIC_QUESTIONS.getAll().length}문항`;
+      }
+      if (window.ELECTRIC_DATA) {
+        document.getElementById('adm-rounds-count').textContent = `${window.ELECTRIC_DATA.rounds.length}회차`;
+        document.getElementById('adm-ebooks-count').textContent = `${window.ELECTRIC_DATA.subjects.length}개`;
+      }
+    }
+
+    async function loadReports() {
+      const tbody = document.getElementById('reports-tbody');
+      const countEl = document.getElementById('adm-reports-count');
+
+      // 로컬 스토리지에 임시 저장된 신고 내역 불러오기
+      let localReports = JSON.parse(localStorage.getItem('cbt_local_error_reports') || '[]');
+
+      // Supabase 연결되어 있는 경우 조회 시도
+      if (window.CBTSupabase && window.CBTSupabase.client) {
+        try {
+          const { data, error } = await window.CBTSupabase.client
+            .from('electric_error_reports')
+            .select('*')
+            .order('created_at', { ascending: false })
+            .limit(30);
+
+          if (!error && data && data.length > 0) {
+            localReports = data;
+          }
+        } catch (e) {
+          console.warn('Supabase reports fetch error, fallback to local', e);
+        }
+      }
+
+      countEl.textContent = `${localReports.length}건`;
+
+      if (localReports.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" style="text-align: center; padding: 40px; color: var(--text-subtle);">
+              현재 접수된 오류 신고가 없습니다. 깨끗한 상태입니다!
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = localReports.map(r => {
+        const dateStr = r.created_at ? new Date(r.created_at).toLocaleDateString('ko-KR') : '방금 전';
+        return `
+          <tr style="border-bottom: 1px solid var(--border);">
+            <td style="padding: 12px; font-weight: 700; color: var(--primary);">${r.question_id}</td>
+            <td style="padding: 12px;"><span class="badge" style="background: var(--bg-subtle);">${r.issue_type}</span></td>
+            <td style="padding: 12px; max-width: 320px; line-height: 1.4;">${r.content}</td>
+            <td style="padding: 12px; color: var(--text-muted); font-size: 0.82rem;">${r.user_email || '비로그인'}</td>
+            <td style="padding: 12px; color: var(--text-subtle); font-size: 0.8rem;">${dateStr}</td>
+            <td style="padding: 12px;">
+              <span style="background: var(--warning-light); color: var(--warning); padding: 3px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 700;">
+                ${r.status || '대기중'}
+              </span>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+  </script>
+</body>
+</html>

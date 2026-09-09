@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>전기기사 필기 준비 CBT | 10개년 기출 & 2025 개정판 이론치트키 완벽대비</title>
+  <meta name="description" content="전기기사 필기 무료 CBT 학습 플랫폼. 10개년 기출 34회차 3,400문항, 2025년 최신 개정판 필기치트키 이론서, 공식 암기 플래시카드, 150분 실전 모의고사 및 오답노트 제공.">
+  <meta name="keywords" content="전기기사, 전기기사 필기, 전기기사 CBT, 전기기사 기출문제, 전기기사 필기치트키, 한국전기설비규정, KEC, 전기자기학, 전력공학, 전기기기, 회로이론, 제어공학">
+  <link rel="canonical" href="https://cbt.chatgpts.kr/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="전기기사 필기 준비 CBT | 무료 기출문제 & 핵심 이론치트키">
+  <meta property="og:description" content="10년치 기출문제 CBT, 2025 개정판 과목별 이론치트키, 실전 모의고사, 오답노트까지 무료로 완벽 학습하세요.">
+  <meta property="og:url" content="https://cbt.chatgpts.kr/">
+  <meta property="og:site_name" content="전기기사 필기 준비">
+
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/cg-auth.css">
+
+  <!-- Supabase CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+  <div class="app-wrap">
+    <!-- 상단 헤더 -->
+    <header class="site-header">
+      <a href="/" class="site-logo">
+        <span class="logo-icon">⚡</span>
+        <span>전기기사 필기 준비</span>
+        <span class="logo-badge">CBT</span>
+      </a>
+
+      <nav class="nav-links">
+        <a href="/subjects" class="nav-link">과목별 이론</a>
+        <a href="/past-exams" class="nav-link">회차별 기출</a>
+        <a href="/daily" class="nav-link">일일 10제</a>
+        <a href="/random" class="nav-link">랜덤 풀기</a>
+        <a href="/mock" class="nav-link">실전 모의고사</a>
+        <a href="/formulas" class="nav-link">공식 암기장</a>
+        <a href="/wrong-note" class="nav-link">오답노트</a>
+        <a href="/my" class="nav-link">내 학습</a>
+      </nav>
+
+      <div class="header-right">
+        <!-- Supabase Google Auth Button Mount -->
+        <div id="cg-auth-container" data-service="cbt"></div>
+      </div>
+    </header>
+
+    <!-- 모바일 보조 네비게이션 바 -->
+    <nav class="mobile-subnav">
+      <a href="/daily" class="active">일일10제</a>
+      <a href="/past-exams">기출CBT</a>
+      <a href="/mock">실전모의</a>
+      <a href="/subjects">이론치트키</a>
+      <a href="/formulas">공식카드</a>
+      <a href="/wrong-note">오답노트</a>
+      <a href="/my">내서재</a>
+    </nav>
+
+    <!-- 히어로 섹션 -->
+    <section class="hero-section">
+      <div class="hero-badge">⚡ 2025 개정판 이론치트키 & 10개년 34회차 기출 완벽 연계</div>
+      <h1 class="hero-title">전기기사 필기 시험,<br>실전 CBT와 핵심 이론으로 단기 합격!</h1>
+      <p class="hero-subtitle">
+        10년치 기출문제(2015~2026) 3,400문항 무료 풀이부터 최신 한국전기설비규정(KEC) 개정 이론, 3D 공식 암기장, 자동 오답노트까지 한 곳에서 완벽 대비하세요.
+      </p>
+
+      <div class="hero-btn-group">
+        <a href="/daily" class="btn btn-primary btn-lg">
+          <span>📝 오늘의 일일 10제 풀기</span>
+        </a>
+        <a href="/mock" class="btn btn-white btn-lg">
+          <span>⏱️ 150분 실전 모의고사</span>
+        </a>
+        <a href="/subjects" class="btn btn-white btn-lg">
+          <span>📖 5개 과목 이론치트키 보기</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- 10개년 문제집 & 해설집 & 이론서 Ebook 바로보기 배너 -->
+    <section class="ebook-banner-card">
+      <div class="ebook-banner-header">
+        <span class="badge-accent">10개년 기출 3,400제 & 2025 이론집 탑재</span>
+        <h3 style="font-size: 1.25rem; font-weight: 800; color: #FFFFFF; margin-top: 6px;">공개 CBT 기출문제집 & 2025 이론치트키 PDF 무료 열람</h3>
+        <p style="font-size: 0.88rem; color: #94A3B8; margin-top: 4px;">방대한 10개년 전체 기출문제와 상세 해설집, 2025년 최신 개정판 핵심 이론서를 즉시 다운로드하거나 온라인에서 확인하세요.</p>
+      </div>
+      <div class="ebook-grid">
+        <a href="/past-exams/전기기사_필기_기출문제집_10개년_모두CBT.pdf" target="_blank" class="ebook-card">
+          <div class="ebook-icon">📚</div>
+          <div class="ebook-info">
+            <span class="ebook-tag">기출문제집 (905P)</span>
+            <div class="ebook-title">전기기사 필기 10개년 기출문제집</div>
+            <span class="ebook-meta">2015~2026 전 회차 34회분 3,400문항 수록</span>
+          </div>
+          <span class="ebook-arrow">열기 ↗</span>
+        </a>
+
+        <a href="/past-exams/전기기사_필기_정답해설집_10개년_모두CBT.pdf" target="_blank" class="ebook-card">
+          <div class="ebook-icon">💡</div>
+          <div class="ebook-info">
+            <span class="ebook-tag tag-purple">정답해설집 (1,558P)</span>
+            <div class="ebook-title">전기기사 필기 10개년 정답 및 전 문항 해설</div>
+            <span class="ebook-meta">문항별 단계별 풀이 공식 & 오답 분석</span>
+          </div>
+          <span class="ebook-arrow">열기 ↗</span>
+        </a>
+
+        <a href="/theory/05_전기설비기술기준_KEC_핵심이론치트키.pdf" target="_blank" class="ebook-card">
+          <div class="ebook-icon">⚡</div>
+          <div class="ebook-info">
+            <span class="ebook-tag tag-emerald">2025 최신개정</span>
+            <div class="ebook-title">KEC 전기설비기술기준 핵심치트키</div>
+            <span class="ebook-meta">개정 규정 완벽 반영 단기 암기집 (28P)</span>
+          </div>
+          <span class="ebook-arrow">열기 ↗</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- 대시보드 통계 지표 -->
+    <section class="stats-card">
+      <div class="stat-box">
+        <div class="stat-number" id="stat-today-solved">0개</div>
+        <div class="stat-label">오늘 푼 문제</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number" id="stat-avg-rate">0%</div>
+        <div class="stat-label">평균 정답률</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number" id="stat-wrong-count" style="color: var(--danger);">0개</div>
+        <div class="stat-label">복습 대기 오답</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number" id="stat-total-solved">0개</div>
+        <div class="stat-label">누적 문제 풀이</div>
+      </div>
+    </section>
+
+    <!-- 6대 맞춤형 학습 모드 -->
+    <section class="modes-grid">
+      <a href="/daily" class="mode-card highlight">
+        <div class="mode-icon-box">🌟</div>
+        <div class="mode-title">일일 10제 (Daily Quiz)</div>
+        <p class="mode-desc">5개 과목에서 매일 엄선된 핵심 2문항씩 총 10문항을 풀고 즉시 해설을 확인하여 출석 스트릭을 쌓으세요.</p>
+        <div class="mode-meta">매일 10분 투자 · 즉시 채점 & 해설</div>
+      </a>
+
+      <a href="/past-exams" class="mode-card">
+        <div class="mode-icon-box">📋</div>
+        <div class="mode-title">회차별 기출 CBT</div>
+        <p class="mode-desc">2015년부터 2026년까지 34개 전 회차 실전 문제를 실제 CBT 수험장 화면과 동일한 OMR 패널로 풀이합니다.</p>
+        <div class="mode-meta">34회차 전 문항 · 과목별 선택 풀기 가능</div>
+      </a>
+
+      <a href="/mock" class="mode-card">
+        <div class="mode-icon-box">⏱️</div>
+        <div class="mode-title">150분 실전 모의고사</div>
+        <p class="mode-desc">5과목 총 100문항을 150분 타이머와 함께 응시하여 과락(40점 미만) 여부와 평균 60점 합격선을 정밀 진단합니다.</p>
+        <div class="mode-meta">실전 타이머 · 과락 자동 판정 · 오답 누적</div>
+      </a>
+
+      <a href="/random" class="mode-card">
+        <div class="mode-icon-box">🎲</div>
+        <div class="mode-title">랜덤 모의고사</div>
+        <p class="mode-desc">10문제, 20문제, 40문제 등 원하는 문항수와 취약 과목을 직접 조합하여 나만의 시험을 생성합니다.</p>
+        <div class="mode-meta">문항수 자유 설정 · 취약 과목 집중 공략</div>
+      </a>
+
+      <a href="/formulas" class="mode-card">
+        <div class="mode-icon-box">📑</div>
+        <div class="mode-title">공식 암기 플래시카드</div>
+        <p class="mode-desc">전기자기학부터 제어공학까지 시험 직전 필수 암기 공식들을 인터랙티브 3D 뒤집기 카드로 마스터하세요.</p>
+        <div class="mode-meta">3D 뒤집기 카드 · 과목별 공식 모음</div>
+      </a>
+
+      <a href="/wrong-note" class="mode-card">
+        <div class="mode-icon-box">❌</div>
+        <div class="mode-title">스마트 오답노트</div>
+        <p class="mode-desc">틀린 문제는 자동으로 저장되며, 과목별로 모아서 오답만 다시 풀어보고 완벽히 숙지할 때까지 반복 복습합니다.</p>
+        <div class="mode-meta">틀린 문제 자동 수집 · 오답 재응시 모드</div>
+      </a>
+    </section>
+
+    <!-- 5개 시험 과목 진도 & 핵심 이론서 다운로드 섹션 -->
+    <section style="margin: 40px 0 20px;">
+      <div style="display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+        <div>
+          <span style="font-size: 0.8rem; font-weight: 700; color: var(--primary); letter-spacing: 0.05em; text-transform: uppercase;">SUBJECTS & CHEATKEYS</span>
+          <h2 style="font-size: 1.5rem; font-weight: 800; color: var(--text-main); margin-top: 4px;">5개 시험 과목 & 2025 핵심 이론서</h2>
+        </div>
+        <a href="/subjects" class="btn btn-outline" style="font-size: 0.85rem; padding: 8px 16px;">전체 과목 이론 상세보기 →</a>
+      </div>
+
+      <div class="subject-grid" id="subjects-card-mount">
+        <!-- JS로 5과목 렌더링 -->
+      </div>
+    </section>
+
+    <!-- 필수 공식 미리보기 섹션 -->
+    <section style="margin: 40px 0;">
+      <div style="display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+        <div>
+          <span style="font-size: 0.8rem; font-weight: 700; color: var(--accent-cyan); letter-spacing: 0.05em; text-transform: uppercase;">FORMULA FLASHCARDS</span>
+          <h2 style="font-size: 1.5rem; font-weight: 800; color: var(--text-main); margin-top: 4px;">오늘의 필수 암기 공식 4선</h2>
+        </div>
+        <a href="/formulas" class="btn btn-outline" style="font-size: 0.85rem; padding: 8px 16px;">공식 암기장 전체보기 (3D) →</a>
+      </div>
+
+      <div class="flip-card-grid" id="formula-preview-mount">
+        <!-- JS로 4개 공식 카드 렌더링 -->
+      </div>
+    </section>
+
+    <!-- 학습 안내 및 FAQ 섹션 -->
+    <section class="info-notice" style="margin-bottom: 40px;">
+      <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--text-main); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+        <span>💡</span> 전기기사 필기 CBT 효율적인 합격 전략
+      </h3>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; font-size: 0.9rem; color: var(--text-muted); line-height: 1.6;">
+        <div style="background: #FFFFFF; padding: 16px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+          <strong style="color: var(--text-main); display: block; margin-bottom: 6px;">1. 과락(40점 미만) 방지가 최우선</strong>
+          전체 평균 60점 이상을 받아도 5개 과목 중 단 1과목이라도 8문제(40점) 미만으로 맞추면 불합격입니다. 특히 전기자기학과 전기기기의 기초 공식을 확실히 정리하세요.
+        </div>
+        <div style="background: #FFFFFF; padding: 16px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+          <strong style="color: var(--text-main); display: block; margin-bottom: 6px;">2. 10개년 기출 3회독 반복</strong>
+          문제은행 출제 방식이므로 최근 10년치 기출문제를 반복하여 문제와 해설 원리를 숙지하는 것이 가장 빠르고 확실한 합격 방법입니다.
+        </div>
+        <div style="background: #FFFFFF; padding: 16px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+          <strong style="color: var(--text-main); display: block; margin-bottom: 6px;">3. 최신 KEC(전기설비기술기준) 규정 준수</strong>
+          2021년 이후 개정된 한국전기설비규정(KEC)에 맞춰 저압/고압 구분, 계통접지(TN, TT, IT), 절연저항 기준이 변경되었으므로 본 사이트의 최신 이론치트키를 참고하세요.
+        </div>
+      </div>
+    </section>
+
+    <!-- 하단 푸터 & 패밀리 사이트 바 -->
+    <footer class="site-footer">
+      <div class="family-bar">
+        <span class="family-title">Family Services</span>
+        <div class="family-links">
+          <a href="https://hanja.chatgpts.kr" target="_blank" rel="noopener">한자야 놀자</a>
+          <a href="https://voca.chatgpts.kr" target="_blank" rel="noopener">보카야 놀자</a>
+          <a href="https://history.chatgpts.kr" target="_blank" rel="noopener">한국사야 놀자</a>
+          <a href="https://fortune.chatgpts.kr" target="_blank" rel="noopener">운세야 놀자</a>
+          <a href="https://mind.chatgpts.kr" target="_blank" rel="noopener">마음일기</a>
+          <a href="https://bible.chatgpts.kr" target="_blank" rel="noopener">바이블야 놀자</a>
+          <a href="https://tools.chatgpts.kr" target="_blank" rel="noopener">만능도구함</a>
+        </div>
+      </div>
+
+      <div class="footer-legal">
+        <p><strong>전기기사 필기 준비 (cbt.chatgpts.kr)</strong> | 국가기술자격 전기기사 필기 수험생을 위한 무료 CBT 학습 시스템</p>
+        <p style="margin-top: 4px;">본 사이트의 기출문제는 한국산업인력공단 및 공개 CBT 자료를 참고하여 재구성하였으며, 모든 문항 해설 및 이론 치트키 요약은 독자적으로 작성되었습니다. 특정 출판사나 유료 서비스와는 무관합니다.</p>
+        <p style="margin-top: 8px; font-size: 0.76rem; color: var(--text-subtle);">
+          © 2026 전기기사 필기 준비. All rights reserved. | <a href="/admin" style="color: var(--text-subtle); text-decoration: underline;">관리자/오류신고 현황</a>
+        </p>
+      </div>
+    </footer>
+  </div>
+
+  <!-- JS -->
+  <script src="/js/supabase-config.js"></script>
+  <script src="/js/cg-auth.js"></script>
+  <script src="/js/storage-manager.js"></script>
+  <script src="/js/electric-data.js"></script>
+  <script src="/js/electric-questions.js"></script>
+  <script src="/js/main.js"></script>
+</body>
+</html>

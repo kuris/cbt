@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>내 학습 대시보드 & 통계 | 전기기사 필기 준비 CBT</title>
+  <meta name="description" content="전기기사 필기 학습 진도, 5개 과목별 취약점 분석, 누적 정답률, 연속 출석 스트릭 및 응시 이력 리포트.">
+  <link rel="canonical" href="https://cbt.chatgpts.kr/my">
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📊</text></svg>">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/cg-auth.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+  <div class="app-wrap">
+    <header class="site-header">
+      <a href="/" class="site-logo">
+        <span class="logo-icon">⚡</span>
+        <span>전기기사 필기 준비</span>
+        <span class="logo-badge">CBT</span>
+      </a>
+
+      <nav class="nav-links">
+        <a href="/subjects" class="nav-link">과목별 이론</a>
+        <a href="/past-exams" class="nav-link">회차별 기출</a>
+        <a href="/daily" class="nav-link">일일 10제</a>
+        <a href="/random" class="nav-link">랜덤 풀기</a>
+        <a href="/mock" class="nav-link">실전 모의고사</a>
+        <a href="/formulas" class="nav-link">공식 암기장</a>
+        <a href="/wrong-note" class="nav-link">오답노트</a>
+        <a href="/my" class="nav-link active">내 학습</a>
+      </nav>
+
+      <div class="header-right">
+        <div id="cg-auth-container" data-service="cbt"></div>
+      </div>
+    </header>
+
+    <nav class="mobile-subnav">
+      <a href="/daily">일일10제</a>
+      <a href="/past-exams">기출CBT</a>
+      <a href="/mock">실전모의</a>
+      <a href="/subjects">이론치트키</a>
+      <a href="/formulas">공식카드</a>
+      <a href="/wrong-note">오답노트</a>
+      <a href="/my" class="active">내서재</a>
+    </nav>
+
+    <!-- 사용자 프로필 카드 -->
+    <div style="background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 24px; margin: 24px 0; box-shadow: var(--shadow-sm); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <div id="user-avatar-box" style="width: 56px; height: 56px; border-radius: var(--radius-full); background: var(--primary-light); color: var(--primary); font-size: 1.6rem; display: flex; align-items: center; justify-content: center; font-weight: 800; border: 2px solid var(--primary-border);">
+          ⚡
+        </div>
+        <div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <h1 style="font-size: 1.3rem; font-weight: 800; color: var(--text-main);" id="user-display-name">수험생 님</h1>
+            <span class="badge" style="background: var(--accent-cyan-light); color: #0284C7; font-size: 0.75rem;">CBT 수험생</span>
+          </div>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 2px;" id="user-email-text">
+            로그인하시면 기기 변경 시에도 학습 기록과 오답노트가 영구 보관됩니다.
+          </p>
+        </div>
+      </div>
+
+      <div id="login-cta-box" style="display: none;">
+        <!-- 비로그인 시 로그인 유도 -->
+      </div>
+    </div>
+
+    <!-- 대시보드 통계 카드 -->
+    <div class="stats-card" style="margin-bottom: 30px;">
+      <div class="stat-box">
+        <div class="stat-number" id="my-streak" style="color: var(--danger);">1일</div>
+        <div class="stat-label">연속 학습 스트릭</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number" id="my-total-solved">0개</div>
+        <div class="stat-label">누적 푼 문제수</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number" id="my-avg-rate">0%</div>
+        <div class="stat-label">전체 평균 정답률</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number" id="my-wrong-count" style="color: var(--warning);">0개</div>
+        <div class="stat-label">복습 대기 오답</div>
+      </div>
+    </div>
+
+    <!-- 5개 과목별 성취도 & 과락 위험 분석 -->
+    <section style="background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 24px; margin-bottom: 30px; box-shadow: var(--shadow-sm);">
+      <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--text-main); margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
+        <span>📊</span> 5개 과목별 성취도 및 과락(40점 미만) 위험도 분석
+      </h2>
+      <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 20px;">
+        합격을 위해서는 과목당 최소 8문제(40점) 이상을 득점하여 과락을 피해야 합니다.
+      </p>
+
+      <div style="display: flex; flex-direction: column; gap: 16px;" id="subject-progress-bars">
+        <!-- JS로 5과목 프로그레스 바 생성 -->
+      </div>
+    </section>
+
+    <!-- 최근 응시 이력 기록 -->
+    <section style="background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 24px; margin-bottom: 40px; box-shadow: var(--shadow-sm);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--text-main); display: flex; align-items: center; gap: 8px;">
+          <span>📝</span> 최근 모의고사 및 기출 응시 이력
+        </h2>
+        <span style="font-size: 0.8rem; color: var(--text-subtle);">최근 10건</span>
+      </div>
+
+      <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; font-size: 0.88rem; text-align: left;">
+          <thead>
+            <tr style="border-bottom: 2px solid var(--border); color: var(--text-muted);">
+              <th style="padding: 10px 12px;">시험명</th>
+              <th style="padding: 10px 12px;">점수</th>
+              <th style="padding: 10px 12px;">결과</th>
+              <th style="padding: 10px 12px;">정답수</th>
+              <th style="padding: 10px 12px;">응시일시</th>
+            </tr>
+          </thead>
+          <tbody id="exam-history-tbody">
+            <!-- JS 동적 렌더링 -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer class="site-footer">
+      <div class="family-bar">
+        <span class="family-title">Family Services</span>
+        <div class="family-links">
+          <a href="https://hanja.chatgpts.kr" target="_blank" rel="noopener">한자야 놀자</a>
+          <a href="https://voca.chatgpts.kr" target="_blank" rel="noopener">보카야 놀자</a>
+          <a href="https://history.chatgpts.kr" target="_blank" rel="noopener">한국사야 놀자</a>
+          <a href="https://fortune.chatgpts.kr" target="_blank" rel="noopener">운세야 놀자</a>
+          <a href="https://mind.chatgpts.kr" target="_blank" rel="noopener">마음일기</a>
+          <a href="https://bible.chatgpts.kr" target="_blank" rel="noopener">바이블야 놀자</a>
+          <a href="https://tools.chatgpts.kr" target="_blank" rel="noopener">만능도구함</a>
+        </div>
+      </div>
+      <div class="footer-legal">
+        <p><strong>전기기사 필기 준비 (cbt.chatgpts.kr)</strong> | 내 학습 대시보드</p>
+        <p style="margin-top: 8px; font-size: 0.76rem; color: var(--text-subtle);">© 2026 전기기사 필기 준비. All rights reserved.</p>
+      </div>
+    </footer>
+  </div>
+
+  <style>
+    .sub-bar-item {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .sub-bar-track {
+      width: 100%;
+      height: 12px;
+      background: var(--bg-subtle);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+      display: flex;
+    }
+    .sub-bar-fill {
+      height: 100%;
+      border-radius: var(--radius-full);
+      transition: width 0.4s ease;
+    }
+  </style>
+
+  <script src="/js/supabase-config.js"></script>
+  <script src="/js/cg-auth.js"></script>
+  <script src="/js/storage-manager.js"></script>
+  <script src="/js/electric-data.js"></script>
+  <script src="/js/electric-questions.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      renderUserProfile();
+      renderStats();
+      renderSubjectBars();
+      renderExamHistory();
+
+      window.addEventListener('cg-auth-user-changed', (e) => {
+        renderUserProfile();
+        renderStats();
+      });
+    });
+
+    function renderUserProfile() {
+      const auth = window.CGAuth;
+      const user = auth ? auth.getUser() : null;
+
+      const nameEl = document.getElementById('user-display-name');
+      const emailEl = document.getElementById('user-email-text');
+      const avatarEl = document.getElementById('user-avatar-box');
+
+      if (user) {
+        nameEl.textContent = `${user.user_metadata?.full_name || user.email.split('@')[0]} 님`;
+        emailEl.textContent = user.email;
+        if (user.user_metadata?.avatar_url) {
+          avatarEl.innerHTML = `<img src="${user.user_metadata.avatar_url}" style="width:100%; height:100%; border-radius:50%;" alt="프로필">`;
+        }
+      } else {
+        nameEl.textContent = '수험생 님 (비로그인)';
+        emailEl.textContent = 'Google 로그인 시 여러 기기 간 학습 이력과 오답노트가 자동 동기화됩니다.';
+      }
+    }
+
+    function renderStats() {
+      if (!window.CBTStorage) return;
+      const stats = window.CBTStorage.getStats();
+
+      document.getElementById('my-streak').textContent = `${stats.streak}일`;
+      document.getElementById('my-total-solved').textContent = `${stats.totalCount}개`;
+      document.getElementById('my-avg-rate').textContent = `${stats.avgRate}%`;
+      document.getElementById('my-wrong-count').textContent = `${stats.wrongCount}개`;
+    }
+
+    function renderSubjectBars() {
+      const mount = document.getElementById('subject-progress-bars');
+      if (!mount || !window.ELECTRIC_DATA || !window.CBTStorage) return;
+
+      const subjects = window.ELECTRIC_DATA.subjects;
+      const subStats = window.CBTStorage.getSubjectStats();
+
+      mount.innerHTML = subjects.map(s => {
+        const data = subStats[s.id] || { solved: 0, correct: 0 };
+        const rate = data.solved > 0 ? Math.round((data.correct / data.solved) * 100) : 0;
+
+        let statusTag = '';
+        if (data.solved >= 5) {
+          if (rate < 40) {
+            statusTag = '<span style="font-size:0.75rem; color:var(--danger); font-weight:700;">🚨 과락 위험 (40% 미만)</span>';
+          } else if (rate >= 60) {
+            statusTag = '<span style="font-size:0.75rem; color:var(--success); font-weight:700;">✅ 안정권 (60% 이상)</span>';
+          } else {
+            statusTag = '<span style="font-size:0.75rem; color:var(--warning); font-weight:700;">⚠️ 주의 (40~59%)</span>';
+          }
+        } else {
+          statusTag = '<span style="font-size:0.75rem; color:var(--text-subtle);">문제 풀이 부족</span>';
+        }
+
+        return `
+          <div class="sub-bar-item">
+            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.88rem;">
+              <span style="font-weight: 700; color: var(--text-main);">${s.icon} ${s.name}</span>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                ${statusTag}
+                <span style="font-weight: 800; color: ${s.color};">${rate}%</span>
+                <span style="font-size: 0.78rem; color: var(--text-subtle);">(${data.correct}/${data.solved}제)</span>
+              </div>
+            </div>
+            <div class="sub-bar-track">
+              <div class="sub-bar-fill" style="width: ${rate}%; background: ${s.color};"></div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderExamHistory() {
+      const tbody = document.getElementById('exam-history-tbody');
+      if (!tbody || !window.CBTStorage) return;
+
+      const logs = window.CBTStorage.getQuizLogs();
+
+      if (logs.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5" style="text-align: center; padding: 40px; color: var(--text-subtle);">
+              아직 응시한 시험 기록이 없습니다. 모의고사나 기출문제를 풀어보세요!
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = logs.slice(0, 10).map(log => {
+        let badge = '';
+        if (log.hasSubFail) {
+          badge = '<span style="background:var(--danger-light); color:var(--danger); padding:3px 8px; border-radius:4px; font-weight:700; font-size:0.75rem;">과락 불합격</span>';
+        } else if (log.isPassed) {
+          badge = '<span style="background:var(--success-light); color:var(--success); padding:3px 8px; border-radius:4px; font-weight:700; font-size:0.75rem;">합격</span>';
+        } else {
+          badge = '<span style="background:var(--bg-subtle); color:var(--text-muted); padding:3px 8px; border-radius:4px; font-weight:700; font-size:0.75rem;">불합격</span>';
+        }
+
+        const dateStr = new Date(log.timestamp).toLocaleDateString('ko-KR', {
+          month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+        });
+
+        return `
+          <tr style="border-bottom: 1px solid var(--border);">
+            <td style="padding: 12px; font-weight: 700; color: var(--text-main);">${log.examTitle || 'CBT 시험'}</td>
+            <td style="padding: 12px; font-weight: 800; font-size: 1rem; color: ${log.score >= 60 && !log.hasSubFail ? 'var(--primary)' : 'var(--danger)'};">${log.score}점</td>
+            <td style="padding: 12px;">${badge}</td>
+            <td style="padding: 12px; color: var(--text-muted);">${log.correctCount} / ${log.totalCount}</td>
+            <td style="padding: 12px; color: var(--text-subtle); font-size: 0.8rem;">${dateStr}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+  </script>
+</body>
+</html>

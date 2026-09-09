@@ -1,0 +1,47 @@
+{
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "rewrites": [
+    { "source": "/subjects", "destination": "/subjects.html" },
+    { "source": "/past-exams", "destination": "/past-exams.html" },
+    { "source": "/daily", "destination": "/daily.html" },
+    { "source": "/random", "destination": "/random.html" },
+    { "source": "/mock", "destination": "/mock.html" },
+    { "source": "/formulas", "destination": "/formulas.html" },
+    { "source": "/wrong-note", "destination": "/wrong-note.html" },
+    { "source": "/my", "destination": "/my.html" },
+    { "source": "/admin", "destination": "/admin.html" }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        }
+      ]
+    },
+    {
+      "source": "/(css|js|assets)/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>공식 암기장 (3D 플래시카드) | 전기기사 필기 준비 CBT</title>
+  <meta name="description" content="전기기사 필기 5개 과목 필수 계산 공식 및 암기 노트. 3D 인터랙티브 카드 뒤집기, 과목별 필터링, 검색 및 외운 공식 체크 기능 제공.">
+  <link rel="canonical" href="https://cbt.chatgpts.kr/formulas">
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📑</text></svg>">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/cg-auth.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+  <div class="app-wrap">
+    <header class="site-header">
+      <a href="/" class="site-logo">
+        <span class="logo-icon">⚡</span>
+        <span>전기기사 필기 준비</span>
+        <span class="logo-badge">CBT</span>
+      </a>
+
+      <nav class="nav-links">
+        <a href="/subjects" class="nav-link">과목별 이론</a>
+        <a href="/past-exams" class="nav-link">회차별 기출</a>
+        <a href="/daily" class="nav-link">일일 10제</a>
+        <a href="/random" class="nav-link">랜덤 풀기</a>
+        <a href="/mock" class="nav-link">실전 모의고사</a>
+        <a href="/formulas" class="nav-link active">공식 암기장</a>
+        <a href="/wrong-note" class="nav-link">오답노트</a>
+        <a href="/my" class="nav-link">내 학습</a>
+      </nav>
+
+      <div class="header-right">
+        <div id="cg-auth-container" data-service="cbt"></div>
+      </div>
+    </header>
+
+    <nav class="mobile-subnav">
+      <a href="/daily">일일10제</a>
+      <a href="/past-exams">기출CBT</a>
+      <a href="/mock">실전모의</a>
+      <a href="/subjects">이론치트키</a>
+      <a href="/formulas" class="active">공식카드</a>
+      <a href="/wrong-note">오답노트</a>
+      <a href="/my">내서재</a>
+    </nav>
+
+    <!-- 공식 암기장 소개 & 검색 바 -->
+    <div style="margin: 28px 0 20px;">
+      <div class="hero-badge" style="background: var(--accent-cyan-light); color: #0284C7; border: 1px solid #BAE6FD;">
+        📑 2025 개정판 이론치트키 핵심 공식 플래시카드
+      </div>
+      <h1 style="font-size: 1.8rem; font-weight: 800; color: var(--text-main); margin-top: 8px;">
+        전기기사 필기 필수 공식 암기장
+      </h1>
+      <p style="font-size: 0.95rem; color: var(--text-muted); margin-top: 4px;">
+        카드를 클릭하거나 탭하면 뒷면의 공식과 풀이 팁이 나타납니다. 시험 전 필수 공식들을 완벽히 마스터하세요!
+      </p>
+
+      <!-- 검색 및 컨트롤 바 -->
+      <div style="display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; align-items: center; justify-content: space-between;">
+        <div style="flex: 1; min-width: 260px; position: relative;">
+          <input type="text" id="formula-search-input" placeholder="공식명, 개념, 기호 검색 (예: 쿨롱, 동기속도, 공진, 역률...)" style="width: 100%; padding: 12px 16px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.92rem; outline: none; background: #FFFFFF;">
+        </div>
+
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <button id="flip-all-btn" class="btn btn-outline" style="font-size: 0.85rem; padding: 10px 14px;">
+            🔄 전체 뒤집기
+          </button>
+          <button id="memorized-filter-btn" class="btn btn-outline" style="font-size: 0.85rem; padding: 10px 14px;">
+            ⭐ 외운 공식만 보기
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 과목 필터 탭 -->
+    <div class="formula-tabs" id="formula-subject-tabs" style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 24px; scrollbar-width: none;">
+      <button class="formula-tab-btn active" data-sub="all">전체 과목</button>
+      <button class="formula-tab-btn" data-sub="em">🧲 전기자기학</button>
+      <button class="formula-tab-btn" data-sub="pe">⚡ 전력공학</button>
+      <button class="formula-tab-btn" data-sub="emach">⚙️ 전기기기</button>
+      <button class="formula-tab-btn" data-sub="cc">🔬 회로이론 및 제어</button>
+      <button class="formula-tab-btn" data-sub="er">📐 전기설비(KEC)</button>
+    </div>
+
+    <!-- 플래시카드 그리드 -->
+    <main style="min-height: 480px; margin-bottom: 40px;">
+      <div class="flip-card-grid" id="formula-cards-mount">
+        <!-- JS로 렌더링 -->
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="family-bar">
+        <span class="family-title">Family Services</span>
+        <div class="family-links">
+          <a href="https://hanja.chatgpts.kr" target="_blank" rel="noopener">한자야 놀자</a>
+          <a href="https://voca.chatgpts.kr" target="_blank" rel="noopener">보카야 놀자</a>
+          <a href="https://history.chatgpts.kr" target="_blank" rel="noopener">한국사야 놀자</a>
+          <a href="https://fortune.chatgpts.kr" target="_blank" rel="noopener">운세야 놀자</a>
+          <a href="https://mind.chatgpts.kr" target="_blank" rel="noopener">마음일기</a>
+          <a href="https://bible.chatgpts.kr" target="_blank" rel="noopener">바이블야 놀자</a>
+          <a href="https://tools.chatgpts.kr" target="_blank" rel="noopener">만능도구함</a>
+        </div>
+      </div>
+      <div class="footer-legal">
+        <p><strong>전기기사 필기 준비 (cbt.chatgpts.kr)</strong> | 3D 공식 플래시카드</p>
+        <p style="margin-top: 8px; font-size: 0.76rem; color: var(--text-subtle);">© 2026 전기기사 필기 준비. All rights reserved.</p>
+      </div>
+    </footer>
+  </div>
+
+  <style>
+    .formula-tab-btn {
+      padding: 9px 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: var(--transition-fast);
+    }
+    .formula-tab-btn:hover {
+      border-color: var(--primary-border);
+      color: var(--primary);
+    }
+    .formula-tab-btn.active {
+      background: var(--primary);
+      color: #FFFFFF;
+      border-color: var(--primary);
+      box-shadow: var(--shadow-blue);
+    }
+    .memorized-toggle-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.4);
+      color: #FFFFFF;
+      border-radius: var(--radius-xs);
+      font-size: 0.75rem;
+      padding: 4px 8px;
+      cursor: pointer;
+      z-index: 5;
+    }
+    .memorized-toggle-btn.memorized {
+      background: var(--success);
+      border-color: var(--success);
+    }
+  </style>
+
+  <script src="/js/supabase-config.js"></script>
+  <script src="/js/cg-auth.js"></script>
+  <script src="/js/storage-manager.js"></script>
+  <script src="/js/electric-data.js"></script>
+  <script src="/js/electric-questions.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      let currentSub = 'all';
+      let searchQuery = '';
+      let showMemorizedOnly = false;
+      let memorizedIds = JSON.parse(localStorage.getItem('cbt_memorized_formulas') || '[]');
+
+      const mount = document.getElementById('formula-cards-mount');
+      const tabs = document.querySelectorAll('.formula-tab-btn');
+      const searchInput = document.getElementById('formula-search-input');
+      const flipAllBtn = document.getElementById('flip-all-btn');
+      const memorizedFilterBtn = document.getElementById('memorized-filter-btn');
+
+      // URL 파라미터 확인
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('sub')) {
+        currentSub = params.get('sub');
+        tabs.forEach(t => {
+          if (t.dataset.sub === currentSub) t.classList.add('active');
+          else t.classList.remove('active');
+        });
+      }
+
+      // 탭 클릭
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          tabs.forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          currentSub = tab.dataset.sub;
+          renderCards();
+        });
+      });
+
+      // 검색 입력
+      searchInput.addEventListener('input', (e) => {
+        searchQuery = e.target.value.toLowerCase().trim();
+        renderCards();
+      });
+
+      // 전체 뒤집기
+      let allFlipped = false;
+      flipAllBtn.addEventListener('click', () => {
+        allFlipped = !allFlipped;
+        const cards = document.querySelectorAll('.flip-card');
+        cards.forEach(c => {
+          if (allFlipped) c.classList.add('flipped');
+          else c.classList.remove('flipped');
+        });
+        flipAllBtn.textContent = allFlipped ? '🔄 앞면으로 복귀' : '🔄 전체 뒤집기';
+      });
+
+      // 외운 공식 필터 버튼
+      memorizedFilterBtn.addEventListener('click', () => {
+        showMemorizedOnly = !showMemorizedOnly;
+        memorizedFilterBtn.classList.toggle('active', showMemorizedOnly);
+        memorizedFilterBtn.textContent = showMemorizedOnly ? '⭐ 전체 공식 보기' : '⭐ 외운 공식만 보기';
+        renderCards();
+      });
+
+      function renderCards() {
+        if (!window.ELECTRIC_DATA) return;
+        let formulas = window.ELECTRIC_DATA.formulas;
+
+        if (currentSub !== 'all') {
+          formulas = formulas.filter(f => f.subject_id === currentSub);
+        }
+
+        if (searchQuery) {
+          formulas = formulas.filter(f => 
+            f.title.toLowerCase().includes(searchQuery) ||
+            f.formula.toLowerCase().includes(searchQuery) ||
+            f.front.toLowerCase().includes(searchQuery) ||
+            f.meaning.toLowerCase().includes(searchQuery)
+          );
+        }
+
+        if (showMemorizedOnly) {
+          formulas = formulas.filter(f => memorizedIds.includes(f.id));
+        }
+
+        if (formulas.length === 0) {
+          mount.innerHTML = `
+            <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius-md);">
+              <span style="font-size: 2.5rem;">🔍</span>
+              <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--text-main); margin: 12px 0 6px;">조건에 일치하는 공식이 없습니다</h3>
+              <p style="font-size: 0.88rem; color: var(--text-muted);">검색어를 변경하거나 과목 필터를 전체로 선택해보세요.</p>
+            </div>
+          `;
+          return;
+        }
+
+        mount.innerHTML = formulas.map(f => {
+          const isMem = memorizedIds.includes(f.id);
+          return `
+            <div class="flip-card" id="card-${f.id}">
+              <div class="flip-card-inner">
+                <!-- 앞면 -->
+                <div class="flip-card-front" onclick="this.parentElement.parentElement.classList.toggle('flipped')">
+                  <span class="flip-subject-badge">${f.subject}</span>
+                  <div style="margin: auto 0;">
+                    <h4 style="font-size: 1.1rem; font-weight: 800; color: var(--text-main); margin-bottom: 8px;">${f.title}</h4>
+                    <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5;">${f.front}</p>
+                  </div>
+                  <span class="flip-hint-text">👆 탭하여 공식 확인</span>
+                </div>
+
+                <!-- 뒷면 -->
+                <div class="flip-card-back">
+                  <span class="flip-subject-badge">${f.subject}</span>
+                  <button class="memorized-toggle-btn ${isMem ? 'memorized' : ''}" onclick="toggleMemorized('${f.id}', event)">
+                    ${isMem ? '✓ 암기완료' : '☆ 외웠어요'}
+                  </button>
+
+                  <div style="margin: auto 0;" onclick="this.parentElement.parentElement.classList.toggle('flipped')">
+                    <div class="formula-display-box">${f.formula}</div>
+                    <p style="font-size: 0.84rem; color: #E2E8F0; line-height: 1.45; margin-bottom: 8px;">${f.meaning}</p>
+                    ${f.caution ? `<p style="font-size: 0.78rem; color: #FDE047;">⚠️ ${f.caution}</p>` : ''}
+                  </div>
+                  <span style="font-size: 0.75rem; color: var(--accent-cyan); font-weight: 600;">단위: ${f.unit}</span>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      window.toggleMemorized = function(fId, e) {
+        e.stopPropagation();
+        const idx = memorizedIds.indexOf(fId);
+        if (idx === -1) memorizedIds.push(fId);
+        else memorizedIds.splice(idx, 1);
+
+        localStorage.setItem('cbt_memorized_formulas', JSON.stringify(memorizedIds));
+        renderCards();
+      };
+
+      renderCards();
+    });
+  </script>
+</body>
+</html>

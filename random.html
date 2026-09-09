@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>랜덤 문제풀이 & 취약과목 공략 | 전기기사 필기 준비 CBT</title>
+  <meta name="description" content="전기기사 필기 원하는 문항수(10/20/40/100제)와 과목을 선택하여 나만의 맞춤형 시험을 생성하고 풀이하는 랜덤 CBT 모드.">
+  <link rel="canonical" href="https://cbt.chatgpts.kr/random">
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎲</text></svg>">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/cg-auth.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+  <div class="app-wrap">
+    <header class="site-header">
+      <a href="/" class="site-logo">
+        <span class="logo-icon">⚡</span>
+        <span>전기기사 필기 준비</span>
+        <span class="logo-badge">CBT</span>
+      </a>
+
+      <nav class="nav-links">
+        <a href="/subjects" class="nav-link">과목별 이론</a>
+        <a href="/past-exams" class="nav-link">회차별 기출</a>
+        <a href="/daily" class="nav-link">일일 10제</a>
+        <a href="/random" class="nav-link active">랜덤 풀기</a>
+        <a href="/mock" class="nav-link">실전 모의고사</a>
+        <a href="/formulas" class="nav-link">공식 암기장</a>
+        <a href="/wrong-note" class="nav-link">오답노트</a>
+        <a href="/my" class="nav-link">내 학습</a>
+      </nav>
+
+      <div class="header-right">
+        <div id="cg-auth-container" data-service="cbt"></div>
+      </div>
+    </header>
+
+    <nav class="mobile-subnav">
+      <a href="/daily">일일10제</a>
+      <a href="/past-exams">기출CBT</a>
+      <a href="/mock">실전모의</a>
+      <a href="/subjects">이론치트키</a>
+      <a href="/formulas">공식카드</a>
+      <a href="/wrong-note">오답노트</a>
+      <a href="/my">내서재</a>
+    </nav>
+
+    <!-- 설정 및 필터 박스 -->
+    <div id="quiz-config-card" style="background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 24px; margin: 24px 0; box-shadow: var(--shadow-sm);">
+      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+        <span style="font-size: 1.5rem;">🎲</span>
+        <h1 style="font-size: 1.4rem; font-weight: 800; color: var(--text-main);">맞춤형 랜덤 문제 생성기</h1>
+      </div>
+      <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 20px;">
+        원하는 문항수와 집중하고 싶은 과목, 풀이 방식을 선택하여 나만의 CBT 테스트를 시작하세요.
+      </p>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; margin-bottom: 24px;">
+        <!-- 1. 문항 수 선택 -->
+        <div>
+          <label style="display: block; font-weight: 800; font-size: 0.9rem; margin-bottom: 8px; color: var(--text-main);">
+            1. 풀이할 문항 수
+          </label>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;" id="count-btn-group">
+            <button class="btn btn-outline active count-opt" data-count="10">10문항</button>
+            <button class="btn btn-outline count-opt" data-count="20">20문항</button>
+            <button class="btn btn-outline count-opt" data-count="40">40문항</button>
+            <button class="btn btn-outline count-opt" data-count="50">전체 문항</button>
+          </div>
+        </div>
+
+        <!-- 2. 풀이 모드 선택 -->
+        <div>
+          <label style="display: block; font-weight: 800; font-size: 0.9rem; margin-bottom: 8px; color: var(--text-main);">
+            2. 풀이 방식
+          </label>
+          <div style="display: flex; gap: 8px;" id="mode-btn-group">
+            <button class="btn btn-outline active mode-opt" data-mode="practice">즉시 정답 & 해설</button>
+            <button class="btn btn-outline mode-opt" data-mode="exam">실전 시험 (종료 후 채점)</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. 과목 선택 (체크박스) -->
+      <div style="margin-bottom: 24px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <label style="font-weight: 800; font-size: 0.9rem; color: var(--text-main);">
+            3. 출제 과목 선택
+          </label>
+          <button id="toggle-all-subjects" style="font-size: 0.8rem; color: var(--primary); font-weight: 700; cursor: pointer;">
+            전체 선택 / 해제
+          </button>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px;" id="subject-checkboxes">
+          <label style="display: flex; align-items: center; gap: 8px; padding: 10px 12px; background: var(--bg-subtle); border-radius: var(--radius-xs); cursor: pointer; font-size: 0.88rem; font-weight: 600;">
+            <input type="checkbox" name="subject" value="em" checked> 🧲 전기자기학
+          </label>
+          <label style="display: flex; align-items: center; gap: 8px; padding: 10px 12px; background: var(--bg-subtle); border-radius: var(--radius-xs); cursor: pointer; font-size: 0.88rem; font-weight: 600;">
+            <input type="checkbox" name="subject" value="pe" checked> ⚡ 전력공학
+          </label>
+          <label style="display: flex; align-items: center; gap: 8px; padding: 10px 12px; background: var(--bg-subtle); border-radius: var(--radius-xs); cursor: pointer; font-size: 0.88rem; font-weight: 600;">
+            <input type="checkbox" name="subject" value="emach" checked> ⚙️ 전기기기
+          </label>
+          <label style="display: flex; align-items: center; gap: 8px; padding: 10px 12px; background: var(--bg-subtle); border-radius: var(--radius-xs); cursor: pointer; font-size: 0.88rem; font-weight: 600;">
+            <input type="checkbox" name="subject" value="cc" checked> 🔬 회로이론·제어
+          </label>
+          <label style="display: flex; align-items: center; gap: 8px; padding: 10px 12px; background: var(--bg-subtle); border-radius: var(--radius-xs); cursor: pointer; font-size: 0.88rem; font-weight: 600;">
+            <input type="checkbox" name="subject" value="er" checked> 📐 전기설비(KEC)
+          </label>
+        </div>
+      </div>
+
+      <button id="start-random-quiz-btn" class="btn btn-primary btn-lg" style="width: 100%; justify-content: center;">
+        🚀 맞춤 시험 시작하기
+      </button>
+    </div>
+
+    <!-- CBT 문제 풀이 영역 (시작 후 노출) -->
+    <main id="random-cbt-area" style="display: none; margin-bottom: 40px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <button id="reconfig-btn" class="btn btn-outline" style="font-size: 0.85rem; padding: 6px 14px;">
+          ← 설정 다시 변경하기
+        </button>
+        <span id="quiz-meta-badge" style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted);"></span>
+      </div>
+      <div id="random-cbt-mount"></div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="family-bar">
+        <span class="family-title">Family Services</span>
+        <div class="family-links">
+          <a href="https://hanja.chatgpts.kr" target="_blank" rel="noopener">한자야 놀자</a>
+          <a href="https://voca.chatgpts.kr" target="_blank" rel="noopener">보카야 놀자</a>
+          <a href="https://history.chatgpts.kr" target="_blank" rel="noopener">한국사야 놀자</a>
+          <a href="https://fortune.chatgpts.kr" target="_blank" rel="noopener">운세야 놀자</a>
+          <a href="https://mind.chatgpts.kr" target="_blank" rel="noopener">마음일기</a>
+          <a href="https://bible.chatgpts.kr" target="_blank" rel="noopener">바이블야 놀자</a>
+          <a href="https://tools.chatgpts.kr" target="_blank" rel="noopener">만능도구함</a>
+        </div>
+      </div>
+      <div class="footer-legal">
+        <p><strong>전기기사 필기 준비 (cbt.chatgpts.kr)</strong> | 맞춤형 랜덤 문제풀이</p>
+        <p style="margin-top: 8px; font-size: 0.76rem; color: var(--text-subtle);">© 2026 전기기사 필기 준비. All rights reserved.</p>
+      </div>
+    </footer>
+  </div>
+
+  <style>
+    .count-opt.active, .mode-opt.active {
+      background: var(--primary) !important;
+      color: #FFFFFF !important;
+      border-color: var(--primary) !important;
+    }
+  </style>
+
+  <script src="/js/supabase-config.js"></script>
+  <script src="/js/cg-auth.js"></script>
+  <script src="/js/storage-manager.js"></script>
+  <script src="/js/electric-data.js"></script>
+  <script src="/js/electric-questions.js"></script>
+  <script src="/js/report-modal.js"></script>
+  <script src="/js/cbt-engine.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      let selectedCount = 10;
+      let selectedMode = 'practice';
+
+      // URL 파라미터 처리
+      const params = new URLSearchParams(window.location.search);
+      const subParam = params.get('sub');
+      const countParam = params.get('count');
+
+      if (countParam) selectedCount = parseInt(countParam, 10);
+
+      // 문항수 버튼 선택
+      const countBtns = document.querySelectorAll('.count-opt');
+      countBtns.forEach(btn => {
+        if (parseInt(btn.dataset.count, 10) === selectedCount) {
+          countBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+        }
+        btn.addEventListener('click', () => {
+          countBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          selectedCount = parseInt(btn.dataset.count, 10);
+        });
+      });
+
+      // 모드 버튼 선택
+      const modeBtns = document.querySelectorAll('.mode-opt');
+      modeBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          modeBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          selectedMode = btn.dataset.mode;
+        });
+      });
+
+      // 특정 과목 파라미터가 들어온 경우 해당 과목만 체크
+      if (subParam) {
+        const checkboxes = document.querySelectorAll('input[name="subject"]');
+        checkboxes.forEach(cb => {
+          cb.checked = (cb.value === subParam);
+        });
+      }
+
+      // 전체 선택/해제 토글
+      const toggleAllBtn = document.getElementById('toggle-all-subjects');
+      toggleAllBtn.addEventListener('click', () => {
+        const checkboxes = document.querySelectorAll('input[name="subject"]');
+        const anyUnchecked = Array.from(checkboxes).some(cb => !cb.checked);
+        checkboxes.forEach(cb => cb.checked = anyUnchecked);
+      });
+
+      // 시작 버튼
+      const startBtn = document.getElementById('start-random-quiz-btn');
+      startBtn.addEventListener('click', () => {
+        const checkedSubs = Array.from(document.querySelectorAll('input[name="subject"]:checked')).map(cb => cb.value);
+        if (checkedSubs.length === 0) {
+          alert('최소 1개 이상의 과목을 선택해주세요.');
+          return;
+        }
+
+        // 선택된 과목들에서 문제 수집
+        let pool = [];
+        checkedSubs.forEach(sub => {
+          pool = pool.concat(window.ELECTRIC_QUESTIONS.getBySubject(sub));
+        });
+
+        if (pool.length === 0) {
+          pool = window.ELECTRIC_QUESTIONS.getAll();
+        }
+
+        // 셔플 및 문항수 슬라이스
+        const shuffled = [...pool].sort(() => Math.random() - 0.5);
+        const questions = shuffled.slice(0, selectedCount);
+
+        // 영역 전환
+        document.getElementById('quiz-config-card').style.display = 'none';
+        const cbtArea = document.getElementById('random-cbt-area');
+        cbtArea.style.display = 'block';
+
+        const metaBadge = document.getElementById('quiz-meta-badge');
+        metaBadge.textContent = `${questions.length}문항 · ${selectedMode === 'practice' ? '즉시 해설 모드' : '실전 시험 모드'}`;
+
+        // CBTEngine 구동
+        window.CBTEngine.start({
+          containerId: 'random-cbt-mount',
+          questions: questions,
+          examTitle: `랜덤 모의고사 (${questions.length}문항)`,
+          examType: 'random',
+          subjectId: checkedSubs.length === 1 ? checkedSubs[0] : 'all',
+          isPractice: (selectedMode === 'practice'),
+          timeLimitMin: Math.max(15, Math.ceil(questions.length * 1.5))
+        });
+      });
+
+      // 다시 설정 버튼
+      document.getElementById('reconfig-btn').addEventListener('click', () => {
+        document.getElementById('random-cbt-area').style.display = 'none';
+        document.getElementById('quiz-config-card').style.display = 'block';
+      });
+
+      // URL 파라미터로 자동 시작 조건인 경우 즉시 시작
+      if (subParam && countParam) {
+        startBtn.click();
+      }
+    });
+  </script>
+</body>
+</html>

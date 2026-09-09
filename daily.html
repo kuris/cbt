@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>오늘의 일일 10제 | 전기기사 필기 준비 CBT</title>
+  <meta name="description" content="매일 5개 과목에서 엄선된 핵심 기출 2문항씩 총 10문항을 풀고 즉시 해설을 확인하는 데일리 학습 모드. 연속 출석 스트릭과 오답 자동 저장 지원.">
+  <link rel="canonical" href="https://cbt.chatgpts.kr/daily">
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌟</text></svg>">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/cg-auth.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+  <div class="app-wrap">
+    <!-- 헤더 -->
+    <header class="site-header">
+      <a href="/" class="site-logo">
+        <span class="logo-icon">⚡</span>
+        <span>전기기사 필기 준비</span>
+        <span class="logo-badge">CBT</span>
+      </a>
+
+      <nav class="nav-links">
+        <a href="/subjects" class="nav-link">과목별 이론</a>
+        <a href="/past-exams" class="nav-link">회차별 기출</a>
+        <a href="/daily" class="nav-link active">일일 10제</a>
+        <a href="/random" class="nav-link">랜덤 풀기</a>
+        <a href="/mock" class="nav-link">실전 모의고사</a>
+        <a href="/formulas" class="nav-link">공식 암기장</a>
+        <a href="/wrong-note" class="nav-link">오답노트</a>
+        <a href="/my" class="nav-link">내 학습</a>
+      </nav>
+
+      <div class="header-right">
+        <div id="cg-auth-container" data-service="cbt"></div>
+      </div>
+    </header>
+
+    <!-- 모바일 보조 네비게이션 바 -->
+    <nav class="mobile-subnav">
+      <a href="/daily" class="active">일일10제</a>
+      <a href="/past-exams">기출CBT</a>
+      <a href="/mock">실전모의</a>
+      <a href="/subjects">이론치트키</a>
+      <a href="/formulas">공식카드</a>
+      <a href="/wrong-note">오답노트</a>
+      <a href="/my">내서재</a>
+    </nav>
+
+    <!-- 일일 10제 안내 헤더 -->
+    <div style="margin: 28px 0 20px; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 14px;">
+      <div>
+        <div class="hero-badge" style="background: var(--accent-cyan-light); color: #0284C7; border: 1px solid #BAE6FD;">
+          📅 매일 10분 균형 학습 · 5개 전 과목 2문항씩
+        </div>
+        <h1 style="font-size: 1.8rem; font-weight: 800; color: var(--text-main); margin-top: 8px;">
+          오늘의 일일 10제
+        </h1>
+        <p style="font-size: 0.95rem; color: var(--text-muted); margin-top: 4px;">
+          문제를 선택하면 즉시 정답과 상세 해설, 공식 치트키가 표시됩니다. 10문제를 완주하고 출석 스트릭을 쌓으세요!
+        </p>
+      </div>
+
+      <div style="background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 16px; display: flex; align-items: center; gap: 12px;">
+        <span style="font-size: 1.8rem;">🔥</span>
+        <div>
+          <span style="font-size: 0.75rem; color: var(--text-subtle); font-weight: 700;">연속 학습 스트릭</span>
+          <div style="font-size: 1.1rem; font-weight: 800; color: var(--danger);" id="daily-streak-badge">1일 연속</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CBT 문제 풀이 영역 -->
+    <main style="min-height: 480px; margin-bottom: 40px;">
+      <div id="daily-cbt-mount">
+        <!-- JS CBTEngine으로 렌더링 -->
+      </div>
+    </main>
+
+    <!-- 푸터 -->
+    <footer class="site-footer">
+      <div class="family-bar">
+        <span class="family-title">Family Services</span>
+        <div class="family-links">
+          <a href="https://hanja.chatgpts.kr" target="_blank" rel="noopener">한자야 놀자</a>
+          <a href="https://voca.chatgpts.kr" target="_blank" rel="noopener">보카야 놀자</a>
+          <a href="https://history.chatgpts.kr" target="_blank" rel="noopener">한국사야 놀자</a>
+          <a href="https://fortune.chatgpts.kr" target="_blank" rel="noopener">운세야 놀자</a>
+          <a href="https://mind.chatgpts.kr" target="_blank" rel="noopener">마음일기</a>
+          <a href="https://bible.chatgpts.kr" target="_blank" rel="noopener">바이블야 놀자</a>
+          <a href="https://tools.chatgpts.kr" target="_blank" rel="noopener">만능도구함</a>
+        </div>
+      </div>
+      <div class="footer-legal">
+        <p><strong>전기기사 필기 준비 (cbt.chatgpts.kr)</strong> | 매일 꾸준한 10문제로 단기 합격 완성</p>
+        <p style="margin-top: 8px; font-size: 0.76rem; color: var(--text-subtle);">© 2026 전기기사 필기 준비. All rights reserved.</p>
+      </div>
+    </footer>
+  </div>
+
+  <script src="/js/supabase-config.js"></script>
+  <script src="/js/cg-auth.js"></script>
+  <script src="/js/storage-manager.js"></script>
+  <script src="/js/electric-data.js"></script>
+  <script src="/js/electric-questions.js"></script>
+  <script src="/js/report-modal.js"></script>
+  <script src="/js/cbt-engine.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. 스트릭 표시
+      if (window.CBTStorage) {
+        const stats = window.CBTStorage.getStats();
+        const streakEl = document.getElementById('daily-streak-badge');
+        if (streakEl) streakEl.textContent = `${stats.streak}일 연속`;
+      }
+
+      // 2. 오늘의 10문제 추출 (5과목 각 2문제)
+      const dailyQuestions = window.ELECTRIC_QUESTIONS.getDaily(10);
+
+      // 3. CBTEngine 구동 (isPractice: true -> 즉시 정답 및 해설 표시 모드)
+      if (window.CBTEngine) {
+        window.CBTEngine.start({
+          containerId: 'daily-cbt-mount',
+          questions: dailyQuestions,
+          examTitle: '오늘의 일일 10제',
+          examType: 'daily',
+          subjectId: 'all',
+          isPractice: true,
+          timeLimitMin: 30
+        });
+      }
+    });
+  </script>
+</body>
+</html>

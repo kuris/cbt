@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>과목별 이론 치트키 & 10개년 기출 연계 | 전기기사 필기 준비 CBT</title>
+  <meta name="description" content="전기기사 필기 5개 과목(전기자기학, 전력공학, 전기기기, 회로이론 및 제어공학, 전기설비기술기준 KEC)의 2025 최신 개정 핵심이론 치트키 요약 및 과목별 분할 PDF 무료 다운로드.">
+  <link rel="canonical" href="https://cbt.chatgpts.kr/subjects">
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📖</text></svg>">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/cg-auth.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+  <div class="app-wrap">
+    <!-- 헤더 -->
+    <header class="site-header">
+      <a href="/" class="site-logo">
+        <span class="logo-icon">⚡</span>
+        <span>전기기사 필기 준비</span>
+        <span class="logo-badge">CBT</span>
+      </a>
+
+      <nav class="nav-links">
+        <a href="/subjects" class="nav-link active">과목별 이론</a>
+        <a href="/past-exams" class="nav-link">회차별 기출</a>
+        <a href="/daily" class="nav-link">일일 10제</a>
+        <a href="/random" class="nav-link">랜덤 풀기</a>
+        <a href="/mock" class="nav-link">실전 모의고사</a>
+        <a href="/formulas" class="nav-link">공식 암기장</a>
+        <a href="/wrong-note" class="nav-link">오답노트</a>
+        <a href="/my" class="nav-link">내 학습</a>
+      </nav>
+
+      <div class="header-right">
+        <div id="cg-auth-container" data-service="cbt"></div>
+      </div>
+    </header>
+
+    <!-- 모바일 보조 네비게이션 바 -->
+    <nav class="mobile-subnav">
+      <a href="/daily">일일10제</a>
+      <a href="/past-exams">기출CBT</a>
+      <a href="/mock">실전모의</a>
+      <a href="/subjects" class="active">이론치트키</a>
+      <a href="/formulas">공식카드</a>
+      <a href="/wrong-note">오답노트</a>
+      <a href="/my">내서재</a>
+    </nav>
+
+    <!-- 상단 소개 배너 -->
+    <div style="margin: 28px 0 20px;">
+      <div class="hero-badge" style="background: rgba(37,99,235,0.08); color: var(--primary); border: 1px solid var(--primary-border);">
+        📘 2025년 개정판 이론치트키 & 10개년 기출 연계 가이드
+      </div>
+      <h1 style="font-size: 1.8rem; font-weight: 800; color: var(--text-main); margin-top: 8px;">
+        5개 시험 과목 핵심 이론 & 치트키 요약
+      </h1>
+      <p style="font-size: 0.95rem; color: var(--text-muted); margin-top: 6px;">
+        기출 10년치(34회차 3,400문항)에 자주 출제되는 핵심 개념과 빈출 공식을 과목별로 정리하였습니다. 과목별 치트키 PDF를 열람하고 실전 문제풀이로 바로 연계하세요.
+      </p>
+    </div>
+
+    <!-- 5개 과목 선택 탭 -->
+    <div class="subject-tabs" id="subject-tabs">
+      <button class="sub-tab-btn active" data-sub="em">🧲 1과목. 전기자기학</button>
+      <button class="sub-tab-btn" data-sub="pe">⚡ 2과목. 전력공학</button>
+      <button class="sub-tab-btn" data-sub="emach">⚙️ 3과목. 전기기기</button>
+      <button class="sub-tab-btn" data-sub="cc">🔬 4과목. 회로이론 및 제어</button>
+      <button class="sub-tab-btn" data-sub="er">📐 5과목. 전기설비기술기준(KEC)</button>
+    </div>
+
+    <!-- 과목 상세 콘텐츠 영역 -->
+    <main id="subject-detail-mount" style="min-height: 480px; margin-bottom: 40px;">
+      <!-- JS로 동적 렌더링 -->
+    </main>
+
+    <!-- 10개년 기출 및 통합 이론서 다운로드 카드 -->
+    <section class="ebook-banner-card" style="margin-bottom: 40px;">
+      <div class="ebook-banner-header">
+        <span class="badge-accent">전체 EBOOK 라이브러리</span>
+        <h3 style="font-size: 1.25rem; font-weight: 800; color: #FFFFFF; margin-top: 6px;">10개년 전체 기출문제집 & 2025 필기치트키 완본</h3>
+        <p style="font-size: 0.88rem; color: #94A3B8; margin-top: 4px;">언제 어디서든 오프라인에서도 학습할 수 있도록 전 회차 문제집과 정답해설집을 제공합니다.</p>
+      </div>
+      <div class="ebook-grid">
+        <a href="/past-exams/전기기사_필기_기출문제집_10개년_모두CBT.pdf" target="_blank" class="ebook-card">
+          <div class="ebook-icon">📖</div>
+          <div class="ebook-info">
+            <span class="ebook-tag">기출 34회차 (905P)</span>
+            <div class="ebook-title">10개년 기출문제집 완본</div>
+            <span class="ebook-meta">2015~2026 3,400제 PDF 다운로드</span>
+          </div>
+          <span class="ebook-arrow">열기 ↗</span>
+        </a>
+
+        <a href="/past-exams/전기기사_필기_정답해설집_10개년_모두CBT.pdf" target="_blank" class="ebook-card">
+          <div class="ebook-icon">💡</div>
+          <div class="ebook-info">
+            <span class="ebook-tag tag-purple">정답해설집 (1,558P)</span>
+            <div class="ebook-title">10개년 전 문항 정답 및 해설집</div>
+            <span class="ebook-meta">상세 풀이식 & 오답 해설 완본</span>
+          </div>
+          <span class="ebook-arrow">열기 ↗</span>
+        </a>
+
+        <a href="/[25년개정판]전기기사 필기치트키(F)_250520_1.pdf" target="_blank" class="ebook-card">
+          <div class="ebook-icon">⚡</div>
+          <div class="ebook-info">
+            <span class="ebook-tag tag-emerald">2025 개정판 완본 (207P)</span>
+            <div class="ebook-title">전기기사 필기치트키 종합 이론서</div>
+            <span class="ebook-meta">5과목 전 단원 통합 치트키 완본</span>
+          </div>
+          <span class="ebook-arrow">열기 ↗</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- 푸터 -->
+    <footer class="site-footer">
+      <div class="family-bar">
+        <span class="family-title">Family Services</span>
+        <div class="family-links">
+          <a href="https://hanja.chatgpts.kr" target="_blank" rel="noopener">한자야 놀자</a>
+          <a href="https://voca.chatgpts.kr" target="_blank" rel="noopener">보카야 놀자</a>
+          <a href="https://history.chatgpts.kr" target="_blank" rel="noopener">한국사야 놀자</a>
+          <a href="https://fortune.chatgpts.kr" target="_blank" rel="noopener">운세야 놀자</a>
+          <a href="https://mind.chatgpts.kr" target="_blank" rel="noopener">마음일기</a>
+          <a href="https://bible.chatgpts.kr" target="_blank" rel="noopener">바이블야 놀자</a>
+          <a href="https://tools.chatgpts.kr" target="_blank" rel="noopener">만능도구함</a>
+        </div>
+      </div>
+      <div class="footer-legal">
+        <p><strong>전기기사 필기 준비 (cbt.chatgpts.kr)</strong> | 2025 이론치트키 & 10개년 기출 연계</p>
+        <p style="margin-top: 4px;">공개 기출 자료 및 이론 핵심을 체계적으로 구조화한 무료 수험 서비스입니다.</p>
+        <p style="margin-top: 8px; font-size: 0.76rem; color: var(--text-subtle);">© 2026 전기기사 필기 준비. All rights reserved.</p>
+      </div>
+    </footer>
+  </div>
+
+  <style>
+    .subject-tabs {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      margin-bottom: 24px;
+      scrollbar-width: none;
+    }
+    .subject-tabs::-webkit-scrollbar { display: none; }
+    .sub-tab-btn {
+      padding: 10px 18px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      white-space: nowrap;
+      transition: var(--transition-fast);
+    }
+    .sub-tab-btn:hover {
+      border-color: var(--primary-border);
+      color: var(--primary);
+    }
+    .sub-tab-btn.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #FFFFFF;
+      box-shadow: var(--shadow-blue);
+    }
+    .chapter-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      margin-bottom: 16px;
+      transition: var(--transition-fast);
+    }
+    .chapter-card:hover {
+      border-color: var(--primary-border);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+  </style>
+
+  <script src="/js/supabase-config.js"></script>
+  <script src="/js/cg-auth.js"></script>
+  <script src="/js/storage-manager.js"></script>
+  <script src="/js/electric-data.js"></script>
+  <script src="/js/electric-questions.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const tabs = document.querySelectorAll('.sub-tab-btn');
+      const urlParams = new URLSearchParams(window.location.search);
+      const initialSub = urlParams.get('id') || 'em';
+
+      tabs.forEach(tab => {
+        if (tab.dataset.sub === initialSub) tab.classList.add('active');
+        else tab.classList.remove('active');
+
+        tab.addEventListener('click', () => {
+          tabs.forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          renderSubject(tab.dataset.sub);
+          window.history.replaceState(null, '', `/subjects?id=${tab.dataset.sub}`);
+        });
+      });
+
+      renderSubject(initialSub);
+    });
+
+    function renderSubject(subId) {
+      const mount = document.getElementById('subject-detail-mount');
+      if (!mount || !window.ELECTRIC_DATA) return;
+
+      const sub = window.ELECTRIC_DATA.getSubjectById(subId);
+      if (!sub) return;
+
+      const formulas = window.ELECTRIC_DATA.getFormulasBySubject(sub.id);
+
+      mount.innerHTML = `
+        <!-- 상단 과목 브리핑 카드 -->
+        <div style="background: #FFFFFF; border: 1px solid var(--border); border-left: 6px solid ${sub.color}; border-radius: var(--radius-md); padding: 24px; margin-bottom: 24px; box-shadow: var(--shadow-sm);">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px;">
+            <div>
+              <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                <span style="font-size: 2rem;">${sub.icon}</span>
+                <div>
+                  <h2 style="font-size: 1.5rem; font-weight: 800; color: var(--text-main);">${sub.name}</h2>
+                  <span style="font-size: 0.8rem; color: var(--text-subtle); font-weight: 600;">10개년 기출 680문항 분석 연계</span>
+                </div>
+              </div>
+              <p style="font-size: 0.95rem; color: var(--text-muted); max-width: 680px; line-height: 1.6;">${sub.desc}</p>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 8px; min-width: 220px;">
+              <a href="${sub.pdf_file}" target="_blank" class="btn btn-primary" style="justify-content: center; background: ${sub.color};">
+                📥 ${sub.pdf_title} 열람
+              </a>
+              <a href="/random?sub=${sub.id}&count=20" class="btn btn-outline" style="justify-content: center;">
+                🎯 ${sub.name} 20제 풀기
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- 단원별 핵심 포인트 및 10개년 기출 연계 -->
+        <div style="margin-bottom: 32px;">
+          <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--text-main); margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+            <span>📌</span> 단원별 핵심 개념 & 기출 빈출 유형
+          </h3>
+          <div class="chapter-list">
+            ${sub.chapters.map((ch, idx) => `
+              <div class="chapter-card">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                  <span style="font-size: 0.8rem; font-weight: 700; color: ${sub.color}; background: ${sub.color}15; padding: 4px 10px; border-radius: var(--radius-full);">
+                    단원 0${idx + 1}
+                  </span>
+                  <span style="font-size: 0.78rem; color: var(--text-subtle);">10개년 평균 출제 3~4문항</span>
+                </div>
+                <h4 style="font-size: 1.05rem; font-weight: 800; color: var(--text-main); margin-bottom: 6px;">${ch.title}</h4>
+                <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5;">${ch.summary}</p>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <!-- 이 과목 필수 암기 공식 모음 -->
+        <div style="margin-bottom: 32px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--text-main); display: flex; align-items: center; gap: 8px;">
+              <span>🧮</span> ${sub.name} 필수 암기 공식
+            </h3>
+            <a href="/formulas?sub=${sub.id}" style="font-size: 0.85rem; color: var(--primary); font-weight: 700;">
+              3D 플래시카드로 외우기 →
+            </a>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px;">
+            ${formulas.map(f => `
+              <div style="background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 16px;">
+                <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-subtle);">${f.subject}</span>
+                <h4 style="font-size: 1rem; font-weight: 800; color: var(--text-main); margin: 4px 0 8px;">${f.title}</h4>
+                <div style="background: #0F172A; color: var(--accent-cyan); font-family: var(--font-mono); font-weight: 700; font-size: 0.95rem; padding: 10px 14px; border-radius: var(--radius-xs); margin-bottom: 10px;">
+                  ${f.formula}
+                </div>
+                <p style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.45;">${f.meaning}</p>
+                ${f.caution ? `<p style="font-size: 0.78rem; color: var(--warning); margin-top: 6px; font-weight: 600;">⚠️ ${f.caution}</p>` : ''}
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html>
