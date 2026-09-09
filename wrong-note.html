@@ -158,6 +158,7 @@
   <script src="/js/electric-data.js"></script>
   <script src="/js/electric-questions.js"></script>
   <script src="/js/report-modal.js"></script>
+  <script src="/js/gemini-helper.js"></script>
   <script src="/js/cbt-engine.js"></script>
 
   <script>
@@ -226,14 +227,15 @@
 
         let result = [];
         wrongs.forEach(w => {
-          const q = qMap[w.questionId];
+          const qId = w.question_id || w.questionId;
+          const q = qMap[qId];
           if (q) {
             if (currentSub === 'all' || q.subject_id === currentSub) {
               result.push({
                 ...q,
-                userAnswer: w.selectedAnswer,
-                wrongCount: w.wrongCount,
-                lastWrongAt: w.timestamp
+                userAnswer: w.selected_answer !== undefined ? w.selected_answer : w.selectedAnswer,
+                wrongCount: w.wrongCount || 1,
+                lastWrongAt: w.created_at || w.timestamp
               });
             }
           }
@@ -250,7 +252,8 @@
 
         const counts = { all: 0, em: 0, pe: 0, emach: 0, cc: 0, er: 0 };
         wrongs.forEach(w => {
-          const q = qMap[w.questionId];
+          const qId = w.question_id || w.questionId;
+          const q = qMap[qId];
           if (q) {
             counts.all++;
             if (counts[q.subject_id] !== undefined) counts[q.subject_id]++;
@@ -330,11 +333,31 @@
               <div style="background: var(--bg-subtle); border-radius: var(--radius-xs); padding: 14px; font-size: 0.88rem; line-height: 1.6; color: var(--text-muted); border-left: 4px solid var(--primary);">
                 <strong style="color: var(--text-main); display: block; margin-bottom: 4px;">💡 정답 해설</strong>
                 ${q.explanation}
+
+                <!-- 제미나이(Gemini) 비전공자 맞춤 쉬운 설명 연동 버튼 -->
+                <div class="gemini-action-wrap" style="margin-top: 10px; padding-top: 10px;">
+                  <div class="gemini-help-hint">
+                    <span>💡</span>
+                    <span>비전공자라서 수식이나 용어가 어렵다면?</span>
+                  </div>
+                  <button type="button" class="btn-gemini-ask btn-gemini-ask-sm" onclick="askWrongGemini('${q.id}')">
+                    <span class="gemini-sparkle">✨</span>
+                    <span>제미나이로 쉽게 더 설명듣기 ↗</span>
+                  </button>
+                </div>
               </div>
             </div>
           `;
         }).join('');
       }
+
+      window.askWrongGemini = function(qId) {
+        if (!window.ELECTRIC_QUESTIONS || !window.CBTGemini) return;
+        const q = window.ELECTRIC_QUESTIONS.getAll().find(item => item.id === qId);
+        if (q) {
+          window.CBTGemini.askQuestion(q);
+        }
+      };
 
       window.removeWrongItem = function(qId) {
         if (window.CBTStorage) {

@@ -1416,3 +1416,99 @@ button {
     grid-template-columns: 1fr;
   }
 }
+
+/* ============================================================
+   제미나이(Gemini) AI 비전공자 쉬운 설명 버튼 & 토스트
+   ============================================================ */
+.btn-gemini-ask {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #1E1B4B 0%, #312E81 50%, #4338CA 100%);
+  color: #FFFFFF !important;
+  border: 1px solid rgba(165, 180, 252, 0.35);
+  border-radius: var(--radius-sm);
+  padding: 10px 18px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(67, 56, 202, 0.25);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-gemini-ask:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.38);
+  border-color: rgba(199, 210, 254, 0.7);
+  background: linear-gradient(135deg, #312E81 0%, #4338CA 50%, #6366F1 100%);
+}
+
+.btn-gemini-ask:active {
+  transform: translateY(0);
+}
+
+.btn-gemini-ask .gemini-sparkle {
+  font-size: 1.05rem;
+  animation: sparkleGlow 2s infinite ease-in-out;
+}
+
+@keyframes sparkleGlow {
+  0%, 100% { transform: scale(1) rotate(0deg); opacity: 1; }
+  50% { transform: scale(1.18) rotate(12deg); opacity: 0.85; }
+}
+
+.btn-gemini-ask-sm {
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  border-radius: var(--radius-xs);
+  gap: 6px;
+}
+
+.gemini-action-wrap {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px dashed rgba(226, 232, 240, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.gemini-help-hint {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.gemini-toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: #0F172A;
+  color: #F8FAFC;
+  padding: 14px 22px;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(99, 102, 241, 0.5);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+  z-index: 99999;
+  max-width: 90vw;
+  width: 440px;
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease;
+}
+
+.gemini-toast.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+

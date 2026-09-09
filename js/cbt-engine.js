@@ -139,6 +139,18 @@
                 <span>출처: ${q.source || '공개 CBT'} · ${q.license_note || '해설 자체 작성'}</span>
                 <span>난이도: ${q.difficulty || '보통'}</span>
               </div>
+
+              <!-- 제미나이(Gemini) 비전공자 맞춤 쉬운 설명 연동 버튼 -->
+              <div class="gemini-action-wrap">
+                <div class="gemini-help-hint">
+                  <span>💡</span>
+                  <span>정답이나 공식이 이해가 안 되시나요? (비전공자 맞춤)</span>
+                </div>
+                <button type="button" class="btn-gemini-ask" id="btn-gemini-ask-current">
+                  <span class="gemini-sparkle">✨</span>
+                  <span>제미나이로 쉽게 더 설명듣기 ↗</span>
+                </button>
+              </div>
             </div>
           ` : ''}
         </div>
@@ -254,6 +266,14 @@
       if (reportBtn && global.CBTReport) {
         reportBtn.addEventListener('click', () => {
           global.CBTReport.open(currentQ);
+        });
+      }
+
+      // 제미나이(Gemini) 비전공자 맞춤 질문 버튼
+      const geminiBtn = document.getElementById('btn-gemini-ask-current');
+      if (geminiBtn && global.CBTGemini) {
+        geminiBtn.addEventListener('click', () => {
+          global.CBTGemini.askQuestion(currentQ);
         });
       }
     }
@@ -420,6 +440,25 @@
           </p>
         </div>
       `;
+    }
+
+    static start(options = {}) {
+      const mountEl = typeof options.containerId === 'string' 
+        ? document.getElementById(options.containerId) 
+        : (options.mountEl || document.getElementById('cbt-mount'));
+      
+      const omrMountEl = typeof options.omrContainerId === 'string'
+        ? document.getElementById(options.omrContainerId)
+        : (options.omrMountEl || document.getElementById('omr-mount'));
+
+      return new CBTEngine({
+        mountEl: mountEl,
+        omrMountEl: omrMountEl,
+        questions: options.questions || [],
+        mode: options.isPractice ? 'practice' : (options.mode || 'exam'),
+        durationSeconds: (options.timeLimitMin || 0) * 60,
+        onFinish: options.onFinish
+      });
     }
   }
 

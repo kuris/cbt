@@ -225,11 +225,35 @@
     const avgRate = totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0;
     const unresolvedWrongs = wrongs.filter(w => !w.is_resolved).length;
 
+    // 연속 출석 스트릭 계산
+    const dates = [...new Set(logs.map(l => l.created_at ? l.created_at.slice(0, 10) : '').filter(Boolean))].sort().reverse();
+    let streak = 0;
+    if (dates.length > 0) {
+      let checkDate = new Date();
+      const todayISO = checkDate.toISOString().slice(0, 10);
+      let currIdx = 0;
+      if (dates[0] === todayISO) {
+        streak++;
+        currIdx = 1;
+      }
+      while (currIdx < dates.length) {
+        checkDate.setDate(checkDate.getDate() - 1);
+        const prevISO = checkDate.toISOString().slice(0, 10);
+        if (dates[currIdx] === prevISO) {
+          streak++;
+          currIdx++;
+        } else {
+          break;
+        }
+      }
+    }
+
     return {
       todayCount: todayQuestions,
       totalCount: totalQuestions,
       avgRate: avgRate,
       wrongCount: unresolvedWrongs,
+      streak: streak,
       recentMode: logs[0] ? logs[0].mode : null
     };
   }

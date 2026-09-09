@@ -262,6 +262,7 @@
   <script src="/js/storage-manager.js"></script>
   <script src="/js/electric-data.js"></script>
   <script src="/js/electric-questions.js"></script>
+  <script src="/js/gemini-helper.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const tabs = document.querySelectorAll('.sub-tab-btn');
@@ -352,20 +353,37 @@
 
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px;">
             ${formulas.map(f => `
-              <div style="background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 16px;">
-                <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-subtle);">${f.subject}</span>
-                <h4 style="font-size: 1rem; font-weight: 800; color: var(--text-main); margin: 4px 0 8px;">${f.title}</h4>
-                <div style="background: #0F172A; color: var(--accent-cyan); font-family: var(--font-mono); font-weight: 700; font-size: 0.95rem; padding: 10px 14px; border-radius: var(--radius-xs); margin-bottom: 10px;">
-                  ${f.formula}
+              <div style="background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 16px; display: flex; flex-direction: column; justify-content: space-between;">
+                <div>
+                  <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-subtle);">${f.subject}</span>
+                  <h4 style="font-size: 1rem; font-weight: 800; color: var(--text-main); margin: 4px 0 8px;">${f.title}</h4>
+                  <div style="background: #0F172A; color: var(--accent-cyan); font-family: var(--font-mono); font-weight: 700; font-size: 0.95rem; padding: 10px 14px; border-radius: var(--radius-xs); margin-bottom: 10px;">
+                    ${f.formula}
+                  </div>
+                  <p style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.45;">${f.meaning}</p>
+                  ${f.caution ? `<p style="font-size: 0.78rem; color: var(--warning); margin-top: 6px; font-weight: 600;">⚠️ ${f.caution}</p>` : ''}
                 </div>
-                <p style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.45;">${f.meaning}</p>
-                ${f.caution ? `<p style="font-size: 0.78rem; color: var(--warning); margin-top: 6px; font-weight: 600;">⚠️ ${f.caution}</p>` : ''}
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px; padding-top: 10px; border-top: 1px dashed var(--border);">
+                  <span style="font-size: 0.76rem; color: var(--text-subtle);">단위: ${f.unit}</span>
+                  <button type="button" class="btn-gemini-ask btn-gemini-ask-sm" onclick="askSubjectFormulaGemini('${f.id}')" style="padding: 5px 10px; font-size: 0.78rem;">
+                    <span class="gemini-sparkle">✨</span>
+                    <span>제미나이 쉬운 설명</span>
+                  </button>
+                </div>
               </div>
             `).join('')}
           </div>
         </div>
       `;
     }
+
+    window.askSubjectFormulaGemini = function(fId) {
+      if (!window.ELECTRIC_DATA || !window.CBTGemini) return;
+      const f = window.ELECTRIC_DATA.formulas.find(item => item.id === fId);
+      if (f) {
+        window.CBTGemini.askFormula(f);
+      }
+    };
   </script>
 </body>
 </html>

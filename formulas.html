@@ -162,6 +162,7 @@
   <script src="/js/storage-manager.js"></script>
   <script src="/js/electric-data.js"></script>
   <script src="/js/electric-questions.js"></script>
+  <script src="/js/gemini-helper.js"></script>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -279,15 +280,30 @@
                   <div style="margin: auto 0;" onclick="this.parentElement.parentElement.classList.toggle('flipped')">
                     <div class="formula-display-box">${f.formula}</div>
                     <p style="font-size: 0.84rem; color: #E2E8F0; line-height: 1.45; margin-bottom: 8px;">${f.meaning}</p>
-                    ${f.caution ? `<p style="font-size: 0.78rem; color: #FDE047;">⚠️ ${f.caution}</p>` : ''}
+                    ${f.caution ? `<p style="font-size: 0.78rem; color: #FDE047; margin-bottom: 8px;">⚠️ ${f.caution}</p>` : ''}
                   </div>
-                  <span style="font-size: 0.75rem; color: var(--accent-cyan); font-weight: 600;">단위: ${f.unit}</span>
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.15); width: 100%;">
+                    <span style="font-size: 0.75rem; color: var(--accent-cyan); font-weight: 600;">단위: ${f.unit}</span>
+                    <button type="button" class="btn-gemini-ask btn-gemini-ask-sm" onclick="askFormulaGemini('${f.id}', event)" style="padding: 4px 10px; font-size: 0.75rem;">
+                      <span class="gemini-sparkle">✨</span>
+                      <span>제미나이 쉬운 설명</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
           `;
         }).join('');
       }
+
+      window.askFormulaGemini = function(fId, e) {
+        e.stopPropagation();
+        if (!window.ELECTRIC_DATA || !window.CBTGemini) return;
+        const f = window.ELECTRIC_DATA.formulas.find(item => item.id === fId);
+        if (f) {
+          window.CBTGemini.askFormula(f);
+        }
+      };
 
       window.toggleMemorized = function(fId, e) {
         e.stopPropagation();

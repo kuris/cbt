@@ -96,10 +96,17 @@ function renderFormulaPreviews() {
               <div class="formula-display-box">${f.formula}</div>
               <p style="font-size: 0.82rem; color: #E2E8F0; line-height: 1.45;">${f.meaning}</p>
             </div>
-            <span style="font-size: 0.74rem; color: var(--accent-cyan); font-weight: 600;">단위: ${f.unit}</span>
+            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-top: auto; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.15);">
+              <span style="font-size: 0.74rem; color: var(--accent-cyan); font-weight: 600;">단위: ${f.unit}</span>
+              <button type="button" class="btn-gemini-ask btn-gemini-ask-sm" onclick="event.stopPropagation(); if(window.CBTGemini) window.CBTGemini.askFormula(window.ELECTRIC_DATA.formulas.find(item => item.id === '${f.id}'))" style="padding: 3px 8px; font-size: 0.72rem;">
+                <span class="gemini-sparkle">✨</span>
+                <span>제미나이 설명</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
     `;
   }).join('');
 }
+
