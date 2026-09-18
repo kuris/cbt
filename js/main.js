@@ -3,18 +3,7 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-  // 1. 패밀리 사이트 드롭다운 토글
-  const fBtn = document.getElementById('family-btn');
-  const fMenu = document.getElementById('family-dropdown-menu');
-  if (fBtn && fMenu) {
-    fBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      fMenu.classList.toggle('show');
-    });
-    document.addEventListener('click', () => {
-      fMenu.classList.remove('show');
-    });
-  }
+  // 1. 패밀리 사이트 드롭다운 토글 (cg-family.js 가 자체 처리 — 구 바인딩 제거됨)
 
   // 2. 대시보드 통계 지표 렌더링
   renderDashboardStats();

@@ -21,6 +21,7 @@
   <!-- CSS -->
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="/css/cg-auth.css">
+  <link rel="stylesheet" href="/css/cg-family.css">
 
   <!-- Supabase CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -51,6 +52,7 @@
       <div class="header-right">
         <!-- Supabase Google Auth Button Mount -->
         <div id="cg-auth-container" data-service="cbt"></div>
+        <div data-cg-family data-current="cbt"></div>
       </div>
     </header>
 
@@ -270,6 +272,7 @@
   <!-- JS -->
   <script src="/js/supabase-config.js"></script>
   <script defer src="/js/cg-auth.js" data-service="cbt" data-mount=".header-right" data-mount-mode="prepend" data-adopt="true"></script>
+  <script defer src="/js/cg-family.js"></script>
   <script src="/js/storage-manager.js"></script>
   <script src="/js/electric-data.js"></script>
   <script src="/js/electric-questions.js"></script>
